@@ -1,8 +1,9 @@
 import numpy
-from osgeo import ogr, osr
+from osgeo import ogr
 
 
 class Geofence:
+	"""GeoFence class that accepts, latitude and longitude to create the center coordinates and a 25.16m octagonal fence"""
 	def __init__(self, latitude, longitude):
 		self.center = (latitude, longitude)
 		self.center_coords = ogr.Geometry(ogr.wkbPoint)
@@ -30,10 +31,10 @@ class Geofence:
 		self.polygon = ogr.Geometry(ogr.wkbPolygon)
 
 		# create geofence
-		self.create_ring()
-		self.create_geofence()
+		self.init_geofence()
 
 	def create_ring(self):
+		"""Internal function to create perimeter points for instance init"""
 		self.north_coords = numpy.add(self.center, self.north)
 		self.northeast_coords = numpy.add(self.center, self.northeast)
 		self.east_coords = numpy.add(self.center, self.east)
@@ -44,6 +45,7 @@ class Geofence:
 		self.northwest_coords = numpy.add(self.center, self.northwest)
 
 	def create_geofence(self):
+		"""Internal function to create GDAL perimeter from perimeter points for instace init"""
 		ring = ogr.Geometry(ogr.wkbLinearRing)
 		ring.AddPoint(*self.north_coords)
 		ring.AddPoint(*self.northeast_coords)
@@ -56,7 +58,20 @@ class Geofence:
 		ring.AddPoint(*self.north_coords)
 		self.polygon.AddGeometry(ring)
 
+	def set_geofence(self, latitude, longitude):
+		"""External function to set geofence to new coordinates"""
+		self.center = (latitude, longitude)
+		self.center_coords = ogr.Geometry(ogr.wkbPoint)
+		self.center_coords.AddPoint(*self.center)
+		self.init_geofence()
+
+	def init_geofence(self):
+		"""Internal function to wrap perimeter geometry creation functions"""
+		self.create_ring()
+		self.create_geofence()
+
 	def in_geofence(self, coordinates):
+		"""External function that returns boolean if input coordinates are inside the geofence"""
 		coords_transformed = ogr.Geometry(ogr.wkbPoint)
 		coords_transformed.AddPoint(*coordinates)
 		return self.polygon.Contains(coords_transformed)
@@ -64,10 +79,12 @@ class Geofence:
 
 if __name__ == "__main__":
 	node1 = Geofence(40.010000, -105.260000)
+	print(node1.center_coords)
 	coords1 = (40.010000, -105.260000)
 	print(node1.in_geofence(coords1))
 
 	center_coords2 = (40.010000, -105.260000)
 	node2 = Geofence(*center_coords2)
+	print(node2)
 	coords2 = (40.010000, -105.260000)
 	print(node2.in_geofence(coords2))

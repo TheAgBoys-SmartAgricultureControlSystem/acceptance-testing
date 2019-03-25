@@ -7,6 +7,8 @@ from tkinter import ttk
 import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import geofencing
+
 logging.basicConfig(level=logging.DEBUG, filename='gui.log', filemode='a',
 					format='%(asctime)s - %(processName)s:%(levelname)s - %(funcName)s: %(message)s')
 
@@ -14,10 +16,18 @@ logging.basicConfig(level=logging.DEBUG, filename='gui.log', filemode='a',
 class Nodes:
 	# sets and initializes named tuples to store packet data for each sensor node
 	Node = collections.namedtuple('node', ['nodeid', 'rssi', 'lat', 'lng', 'soil'])
-	node0 = Node(nodeid=None, rssi=None, lat=None, lng=None, soil=None)
-	node1 = Node(nodeid=None, rssi=None, lat=None, lng=None, soil=None)
-	node2 = Node(nodeid=None, rssi=None, lat=None, lng=None, soil=None)
-	node3 = Node(nodeid=None, rssi=None, lat=None, lng=None, soil=None)
+	node0 = Node(nodeid=0, rssi=0, lat=0.0, lng=0.0, soil=0)
+	node0_center = geofencing.Geofence(40.010000, -105.260000)
+
+	node1 = Node(nodeid=0, rssi=0, lat=0.0, lng=0.0, soil=0)
+	node1_center = geofencing.Geofence(40.010000, -105.260000)
+
+	node2 = Node(nodeid=0, rssi=0, lat=0.0, lng=0.0, soil=0)
+	node2_center = geofencing.Geofence(40.010000, -105.260000)
+
+	node3 = Node(nodeid=0, rssi=0, lat=0.0, lng=0.0, soil=0)
+	node3_center = geofencing.Geofence(40.010000, -105.260000)
+
 	logging.debug("Node named tuples initialized")
 
 
@@ -55,7 +65,7 @@ class Window(Frame):
 		logging.info("Background Scheduler Started")
 
 		# general status frame
-		self.genstatus = LabelFrame(master, width=640, height=120, text="General Status")
+		self.genstatus = LabelFrame(master, width=640, height=240, text="General Status")
 		self.genstatus.pack()
 		# subsystem status frame
 		self.substatus = LabelFrame(master, width=640, height=240, text="Subsystem Status")
@@ -69,6 +79,8 @@ class Window(Frame):
 		self.notebook.add(self.frame1, text='Sensor Status')
 		self.frame2 = ttk.Frame(self.notebook)
 		self.notebook.add(self.frame2, text='Serial Output')
+		self.frame3 = ttk.Frame(self.notebook)
+		self.notebook.add(self.frame3, text='Settings')
 
 		# set frames and labels for 4 sensor nodes
 		self.nodeframe0 = ttk.LabelFrame(self.frame1, text='Node 0')
@@ -180,6 +192,76 @@ class Window(Frame):
 		self.node3labelstatusres.grid(column=1, row=5)
 
 		logging.debug("Finished building gui skeleton")
+
+		# node settings frame
+		self.node0settings = LabelFrame(self.frame3, width=640, height=240, text="Node 0")
+		self.node0settings.grid(column=0, row=0)
+
+		self.node0settingslbl_lat = Label(self.node0settings, text="Latitude")
+		self.node0settingslbl_lat.grid(column=1, row=2)
+		self.node0settingsinp_lat = Entry(self.node0settings, width=11)
+		self.node0settingsinp_lat.grid(column=2, row=2)
+
+		self.node0settingslbl_lng = Label(self.node0settings, text="Longitude")
+		self.node0settingslbl_lng.grid(column=1, row=3)
+		self.node0settingsinp_lng = Entry(self.node0settings, width=11)
+		self.node0settingsinp_lng.grid(column=2, row=3)
+
+		self.node0settingsbtn_lng = Button(self.node0settings, text="Set Coordinates",
+										   command=lambda: self.set_coords(0))
+		self.node0settingsbtn_lng.grid(column=2, row=4)
+
+		self.node1settings = LabelFrame(self.frame3, width=640, height=240, text="Node 1")
+		self.node1settings.grid(column=0, row=1)
+
+		self.node1settingslbl_lat = Label(self.node1settings, text="Latitude")
+		self.node1settingslbl_lat.grid(column=1, row=2)
+		self.node1settingsinp_lat = Entry(self.node1settings, width=11)
+		self.node1settingsinp_lat.grid(column=2, row=2)
+
+		self.node1settingslbl_lng = Label(self.node1settings, text="Longitude")
+		self.node1settingslbl_lng.grid(column=1, row=3)
+		self.node1settingsinp_lng = Entry(self.node1settings, width=11)
+		self.node1settingsinp_lng.grid(column=2, row=3)
+
+		self.node1settingsbtn_lng = Button(self.node1settings, text="Set Coordinates",
+										   command=lambda: self.set_coords(1))
+		self.node1settingsbtn_lng.grid(column=2, row=4)
+
+		self.node2settings = LabelFrame(self.frame3, width=640, height=240, text="Node 2")
+		self.node2settings.grid(column=1, row=0)
+
+		self.node2settingslbl_lat = Label(self.node2settings, text="Latitude")
+		self.node2settingslbl_lat.grid(column=1, row=2)
+		self.node2settingsinp_lat = Entry(self.node2settings, width=11)
+		self.node2settingsinp_lat.grid(column=2, row=2)
+
+		self.node2settingslbl_lng = Label(self.node2settings, text="Longitude")
+		self.node2settingslbl_lng.grid(column=1, row=3)
+		self.node2settingsinp_lng = Entry(self.node2settings, width=11)
+		self.node2settingsinp_lng.grid(column=2, row=3)
+
+		self.node2settingsbtn_lng = Button(self.node2settings, text="Set Coordinates",
+										   command=lambda: self.set_coords(2))
+		self.node2settingsbtn_lng.grid(column=2, row=4)
+
+		self.node3settings = LabelFrame(self.frame3, width=640, height=240, text="Node 3")
+		self.node3settings.grid(column=1, row=1)
+
+		self.node3settingslbl_lat = Label(self.node3settings, text="Latitude")
+		self.node3settingslbl_lat.grid(column=1, row=2)
+		self.node3settingsinp_lat = Entry(self.node3settings, width=11)
+		self.node3settingsinp_lat.grid(column=2, row=2)
+
+		self.node3settingslbl_lng = Label(self.node3settings, text="Longitude")
+		self.node3settingslbl_lng.grid(column=1, row=3)
+		self.node3settingsinp_lng = Entry(self.node3settings, width=11)
+		self.node3settingsinp_lng.grid(column=2, row=3)
+
+		self.node3settingsbtn_lng = Button(self.node3settings, text="Set Coordinates",
+										   command=lambda: self.set_coords(3))
+		self.node3settingsbtn_lng.grid(column=2, row=4)
+
 		# initialize buttons and other gui stuff
 		self.init_window()
 
@@ -231,21 +313,29 @@ class Window(Frame):
 
 					# send packet data to appropriate named tuples
 					if int(self.processed_data[0][7:]) == 10:
-						Nodes.node0 = Nodes.node0._replace(nodeid=self.processed_data[0][7:], rssi=self.processed_data[4][5:],
+						Nodes.node0 = Nodes.node0._replace(nodeid=self.processed_data[0][7:],
+														   rssi=self.processed_data[4][5:],
 														   lat=self.processed_data[2][9:],
-														   lng=self.processed_data[3][10:], soil=self.processed_data[1][13:])
+														   lng=self.processed_data[3][10:],
+														   soil=self.processed_data[1][13:])
 					if int(self.processed_data[0][7:]) == 11:
-						Nodes.node1 = Nodes.node1._replace(nodeid=self.processed_data[0][7:], rssi=self.processed_data[4][5:],
+						Nodes.node1 = Nodes.node1._replace(nodeid=self.processed_data[0][7:],
+														   rssi=self.processed_data[4][5:],
 														   lat=self.processed_data[2][9:],
-														   lng=self.processed_data[3][10:], soil=self.processed_data[1][13:])
+														   lng=self.processed_data[3][10:],
+														   soil=self.processed_data[1][13:])
 					if int(self.processed_data[0][7:]) == 12:
-						Nodes.node2 = Nodes.node2._replace(nodeid=self.processed_data[0][7:], rssi=self.processed_data[4][5:],
+						Nodes.node2 = Nodes.node2._replace(nodeid=self.processed_data[0][7:],
+														   rssi=self.processed_data[4][5:],
 														   lat=self.processed_data[2][9:],
-														   lng=self.processed_data[3][10:], soil=self.processed_data[1][13:])
+														   lng=self.processed_data[3][10:],
+														   soil=self.processed_data[1][13:])
 					if int(self.processed_data[0][7:]) == 13:
-						Nodes.node3 = Nodes.node3._replace(nodeid=self.processed_data[0][7:], rssi=self.processed_data[4][5:],
+						Nodes.node3 = Nodes.node3._replace(nodeid=self.processed_data[0][7:],
+														   rssi=self.processed_data[4][5:],
 														   lat=self.processed_data[2][9:],
-														   lng=self.processed_data[3][10:], soil=self.processed_data[1][13:])
+														   lng=self.processed_data[3][10:],
+														   soil=self.processed_data[1][13:])
 					logging.debug("Packet data sent to appropriate named tuples")
 			except IndexError:
 				logging.error("Index Error in filling packet named tuples with packet strings")
@@ -288,34 +378,30 @@ class Window(Frame):
 
 		# set node status based on rssi, coords
 		try:
-			if (int(Nodes.node0.rssi) >= int(self.rssi_min)) and (float(Nodes.node0.lat) == float(self.latitude)) and (
-					float(Nodes.node0.lng) == float(self.longitude)):
-				self.node0labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
-												   anchor=CENTER)
+			if (int(Nodes.node0.rssi) >= int(self.rssi_min)) and (
+					float(Nodes.node0.lat) == float(self.node0settingsinp_lat.get())) and (
+					float(Nodes.node0.lng) == float(self.node0settingsinp_lng.get())):
+				self.node0labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
-				self.node0labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
-												   width=10)
-			if (int(Nodes.node1.rssi) >= int(self.rssi_min)) and (float(Nodes.node1.lat) == float(self.latitude)) and (
-					float(Nodes.node1.lng) == float(self.longitude)):
-				self.node1labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
-												   anchor=CENTER)
+				self.node0labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
+			if (int(Nodes.node1.rssi) >= int(self.rssi_min)) and (
+					float(Nodes.node1.lat) == float(self.node1settingsinp_lat.get())) and (
+					float(Nodes.node1.lng) == float(self.node1settingsinp_lng.get())):
+				self.node1labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
-				self.node1labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
-												   width=10)
-			if (int(Nodes.node2.rssi) >= int(self.rssi_min)) and (float(Nodes.node2.lat) == float(self.latitude)) and (
-					float(Nodes.node2.lng) == float(self.longitude)):
-				self.node2labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
-												   anchor=CENTER)
+				self.node1labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
+			if (int(Nodes.node2.rssi) >= int(self.rssi_min)) and (
+					float(Nodes.node2.lat) == float(self.node2settingsinp_lat.get())) and (
+					float(Nodes.node2.lng) == float(self.node2settingsinp_lng.get())):
+				self.node2labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
-				self.node2labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
-												   width=10)
-			if (int(Nodes.node3.rssi) >= int(self.rssi_min)) and (float(Nodes.node3.lat) == float(self.latitude)) and (
-					float(Nodes.node3.lng) == float(self.longitude)):
-				self.node3labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
-												   anchor=CENTER)
+				self.node2labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
+			if (int(Nodes.node3.rssi) >= int(self.rssi_min)) and (
+					float(Nodes.node3.lat) == float(self.node3settingsinp_lat.get())) and (
+					float(Nodes.node3.lng) == float(self.node3settingsinp_lng.get())):
+				self.node3labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
-				self.node3labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
-												   width=10)
+				self.node3labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
 
 			logging.info("Node Status Set")
 		except TypeError:
@@ -328,6 +414,28 @@ class Window(Frame):
 		self.scheduler.shutdown()
 		logging.info("Quitting GUI program")
 		sys.exit()
+
+	def set_coords(self, node):
+		print("Setting Coords for Node " + str(node))
+		if node == 0:
+			Nodes.node0_center.set_geofence(float(self.node0settingsinp_lat.get()), float(self.node0settingsinp_lng.get()))
+			print("Coords for Node " + str(node) + " set to " + str(self.node0settingsinp_lat.get()) + "," + str(
+				self.node0settingsinp_lng.get()))
+			print(Nodes.node0_center.center_coords)
+		elif node == 1:
+			Nodes.node1_center.set_geofence(float(self.node1settingsinp_lat.get()), float(self.node1settingsinp_lng.get()))
+			print("Coords for Node " + str(node) + " set to " + str(self.node1settingsinp_lat.get()) + "," + str(
+				self.node1settingsinp_lng.get()))
+		elif node == 2:
+			Nodes.node2_center.set_geofence(float(self.node2settingsinp_lat.get()), float(self.node2settingsinp_lng.get()))
+			print("Coords for Node " + str(node) + " set to " + str(self.node2settingsinp_lat.get()) + "," + str(
+				self.node2settingsinp_lng.get()))
+		elif node == 3:
+			Nodes.node2_center.set_geofence(float(self.node3settingsinp_lat.get()), float(self.node3settingsinp_lng.get()))
+			print("Coords for Node " + str(node) + " set to " + str(self.node3settingsinp_lat.get()) + "," + str(
+				self.node3settingsinp_lng.get()))
+		else:
+			pass
 
 
 # initialize and start instance of gui
