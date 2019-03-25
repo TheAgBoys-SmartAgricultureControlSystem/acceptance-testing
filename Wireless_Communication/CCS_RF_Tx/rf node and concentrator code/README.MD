@@ -1,0 +1,1 @@
+Concentrator runs on SDK 2.30 and Node runs on SDK 2.40
