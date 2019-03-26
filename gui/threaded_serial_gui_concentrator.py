@@ -8,6 +8,7 @@ import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import geofencing
+import entryvalidation
 
 logging.basicConfig(level=logging.DEBUG, filename='gui.log', filemode='a',
 					format='%(asctime)s - %(processName)s:%(levelname)s - %(funcName)s: %(message)s')
@@ -56,8 +57,16 @@ class Window(Frame):
 			logging.critical("Failed to connect to %s at %d baud", self.port, self.baud)
 			sys.exit()
 
-		self.latitude = -105.261234
-		self.longitude = 40.011234
+		self.latitude = 40.011234
+		self.latitude_str0 = str(self.latitude)
+		self.latitude_str1 = str(self.latitude)
+		self.latitude_str2 = str(self.latitude)
+		self.latitude_str3 = str(self.latitude)
+		self.longitude = -105.261234
+		self.longitude_str0 = str(self.longitude)
+		self.longitude_str1 = str(self.longitude)
+		self.longitude_str2 = str(self.longitude)
+		self.longitude_str3 = str(self.longitude)
 		self.rssi_min = -103
 
 		# start scheduler for background tasks (i.e. refresh)
@@ -199,12 +208,12 @@ class Window(Frame):
 
 		self.node0settingslbl_lat = Label(self.node0settings, text="Latitude")
 		self.node0settingslbl_lat.grid(column=1, row=2)
-		self.node0settingsinp_lat = Entry(self.node0settings, width=11)
+		self.node0settingsinp_lat = entryvalidation.FloatEntry(self.node0settings, width=11)
 		self.node0settingsinp_lat.grid(column=2, row=2)
 
 		self.node0settingslbl_lng = Label(self.node0settings, text="Longitude")
 		self.node0settingslbl_lng.grid(column=1, row=3)
-		self.node0settingsinp_lng = Entry(self.node0settings, width=11)
+		self.node0settingsinp_lng = entryvalidation.FloatEntry(self.node0settings, width=11)
 		self.node0settingsinp_lng.grid(column=2, row=3)
 
 		self.node0settingsbtn_lng = Button(self.node0settings, text="Set Coordinates",
@@ -216,12 +225,12 @@ class Window(Frame):
 
 		self.node1settingslbl_lat = Label(self.node1settings, text="Latitude")
 		self.node1settingslbl_lat.grid(column=1, row=2)
-		self.node1settingsinp_lat = Entry(self.node1settings, width=11)
+		self.node1settingsinp_lat = entryvalidation.FloatEntry(self.node1settings, width=11)
 		self.node1settingsinp_lat.grid(column=2, row=2)
 
 		self.node1settingslbl_lng = Label(self.node1settings, text="Longitude")
 		self.node1settingslbl_lng.grid(column=1, row=3)
-		self.node1settingsinp_lng = Entry(self.node1settings, width=11)
+		self.node1settingsinp_lng = entryvalidation.FloatEntry(self.node1settings, width=11)
 		self.node1settingsinp_lng.grid(column=2, row=3)
 
 		self.node1settingsbtn_lng = Button(self.node1settings, text="Set Coordinates",
@@ -233,12 +242,12 @@ class Window(Frame):
 
 		self.node2settingslbl_lat = Label(self.node2settings, text="Latitude")
 		self.node2settingslbl_lat.grid(column=1, row=2)
-		self.node2settingsinp_lat = Entry(self.node2settings, width=11)
+		self.node2settingsinp_lat = entryvalidation.FloatEntry(self.node2settings, width=11)
 		self.node2settingsinp_lat.grid(column=2, row=2)
 
 		self.node2settingslbl_lng = Label(self.node2settings, text="Longitude")
 		self.node2settingslbl_lng.grid(column=1, row=3)
-		self.node2settingsinp_lng = Entry(self.node2settings, width=11)
+		self.node2settingsinp_lng = entryvalidation.FloatEntry(self.node2settings, width=11)
 		self.node2settingsinp_lng.grid(column=2, row=3)
 
 		self.node2settingsbtn_lng = Button(self.node2settings, text="Set Coordinates",
@@ -250,12 +259,12 @@ class Window(Frame):
 
 		self.node3settingslbl_lat = Label(self.node3settings, text="Latitude")
 		self.node3settingslbl_lat.grid(column=1, row=2)
-		self.node3settingsinp_lat = Entry(self.node3settings, width=11)
+		self.node3settingsinp_lat = entryvalidation.FloatEntry(self.node3settings, width=11)
 		self.node3settingsinp_lat.grid(column=2, row=2)
 
 		self.node3settingslbl_lng = Label(self.node3settings, text="Longitude")
 		self.node3settingslbl_lng.grid(column=1, row=3)
-		self.node3settingsinp_lng = Entry(self.node3settings, width=11)
+		self.node3settingsinp_lng = entryvalidation.FloatEntry(self.node3settings, width=11)
 		self.node3settingsinp_lng.grid(column=2, row=3)
 
 		self.node3settingsbtn_lng = Button(self.node3settings, text="Set Coordinates",
@@ -378,27 +387,34 @@ class Window(Frame):
 
 		# set node status based on rssi, coords
 		try:
-			if (int(Nodes.node0.rssi) >= int(self.rssi_min)) and (
-					float(Nodes.node0.lat) == float(self.node0settingsinp_lat.get())) and (
-					float(Nodes.node0.lng) == float(self.node0settingsinp_lng.get())):
+			self.latitude_str0 = self.node0settingsinp_lat.get()
+			self.longitude_str0 = self.node0settingsinp_lng.get()
+			self.latitude_str1 = self.node1settingsinp_lat.get()
+			self.longitude_str1 = self.node1settingsinp_lng.get()
+			self.latitude_str2 = self.node2settingsinp_lat.get()
+			self.longitude_str2 = self.node2settingsinp_lng.get()
+			self.latitude_str3 = self.node3settingsinp_lat.get()
+			self.longitude_str3 = self.node3settingsinp_lng.get()
+
+			print("Input coords:")
+			print((float(Nodes.node0.lat), float(Nodes.node0.lng)))
+			print("Node center coords")
+			print(Nodes.node0_center.center_coords)
+			print(Nodes.node0_center.in_geofence((float(Nodes.node0.lat), float(Nodes.node0.lng))))
+
+			if (int(Nodes.node0.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence((float(Nodes.node0.lat), float(Nodes.node0.lng))):
 				self.node0labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
 				self.node0labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
-			if (int(Nodes.node1.rssi) >= int(self.rssi_min)) and (
-					float(Nodes.node1.lat) == float(self.node1settingsinp_lat.get())) and (
-					float(Nodes.node1.lng) == float(self.node1settingsinp_lng.get())):
+			if (int(Nodes.node1.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence((float(Nodes.node1.lat), float(Nodes.node1.lng))):
 				self.node1labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
 				self.node1labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
-			if (int(Nodes.node2.rssi) >= int(self.rssi_min)) and (
-					float(Nodes.node2.lat) == float(self.node2settingsinp_lat.get())) and (
-					float(Nodes.node2.lng) == float(self.node2settingsinp_lng.get())):
+			if (int(Nodes.node2.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence((float(Nodes.node2.lat), float(Nodes.node2.lng))):
 				self.node2labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
 				self.node2labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
-			if (int(Nodes.node3.rssi) >= int(self.rssi_min)) and (
-					float(Nodes.node3.lat) == float(self.node3settingsinp_lat.get())) and (
-					float(Nodes.node3.lng) == float(self.node3settingsinp_lng.get())):
+			if (int(Nodes.node3.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence((float(Nodes.node3.lat), float(Nodes.node3.lng))):
 				self.node3labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10, anchor=CENTER)
 			else:
 				self.node3labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER, width=10)
@@ -417,23 +433,36 @@ class Window(Frame):
 
 	def set_coords(self, node):
 		print("Setting Coords for Node " + str(node))
+
+		self.latitude_str0 = self.node0settingsinp_lat.get()
+		self.longitude_str0 = self.node0settingsinp_lng.get()
+		self.latitude_str1 = self.node1settingsinp_lat.get()
+		self.longitude_str1 = self.node1settingsinp_lng.get()
+		self.latitude_str2 = self.node2settingsinp_lat.get()
+		self.longitude_str2 = self.node2settingsinp_lng.get()
+		self.latitude_str3 = self.node3settingsinp_lat.get()
+		self.longitude_str3 = self.node3settingsinp_lng.get()
+
 		if node == 0:
-			Nodes.node0_center.set_geofence(float(self.node0settingsinp_lat.get()), float(self.node0settingsinp_lng.get()))
+			Nodes.node0_center = geofencing.Geofence(float(self.latitude_str0), float(self.longitude_str0))
 			print("Coords for Node " + str(node) + " set to " + str(self.node0settingsinp_lat.get()) + "," + str(
 				self.node0settingsinp_lng.get()))
 			print(Nodes.node0_center.center_coords)
 		elif node == 1:
-			Nodes.node1_center.set_geofence(float(self.node1settingsinp_lat.get()), float(self.node1settingsinp_lng.get()))
+			Nodes.node1_center = geofencing.Geofence(float(self.latitude_str1), float(self.longitude_str1))
 			print("Coords for Node " + str(node) + " set to " + str(self.node1settingsinp_lat.get()) + "," + str(
 				self.node1settingsinp_lng.get()))
+			print(Nodes.node1_center.center_coords)
 		elif node == 2:
-			Nodes.node2_center.set_geofence(float(self.node2settingsinp_lat.get()), float(self.node2settingsinp_lng.get()))
+			Nodes.node2_center = geofencing.Geofence(float(self.latitude_str2), float(self.longitude_str2))
 			print("Coords for Node " + str(node) + " set to " + str(self.node2settingsinp_lat.get()) + "," + str(
 				self.node2settingsinp_lng.get()))
+			print(Nodes.node2_center.center_coords)
 		elif node == 3:
-			Nodes.node2_center.set_geofence(float(self.node3settingsinp_lat.get()), float(self.node3settingsinp_lng.get()))
+			Nodes.node3_center = geofencing.Geofence(float(self.latitude_str3), float(self.longitude_str3))
 			print("Coords for Node " + str(node) + " set to " + str(self.node3settingsinp_lat.get()) + "," + str(
 				self.node3settingsinp_lng.get()))
+			print(Nodes.node3_center.center_coords)
 		else:
 			pass
 

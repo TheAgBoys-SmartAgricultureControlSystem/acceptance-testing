@@ -45,7 +45,7 @@ class Geofence:
 		self.northwest_coords = numpy.add(self.center, self.northwest)
 
 	def create_geofence(self):
-		"""Internal function to create GDAL perimeter from perimeter points for instace init"""
+		"""Internal function to create GDAL perimeter from perimeter points for instance init"""
 		ring = ogr.Geometry(ogr.wkbLinearRing)
 		ring.AddPoint(*self.north_coords)
 		ring.AddPoint(*self.northeast_coords)
@@ -77,14 +77,14 @@ class Geofence:
 		return self.polygon.Contains(coords_transformed)
 
 
-if __name__ == "__main__":
-	node1 = Geofence(40.010000, -105.260000)
-	print(node1.center_coords)
-	coords1 = (40.010000, -105.260000)
-	print(node1.in_geofence(coords1))
-
-	center_coords2 = (40.010000, -105.260000)
-	node2 = Geofence(*center_coords2)
-	print(node2)
-	coords2 = (40.010000, -105.260000)
-	print(node2.in_geofence(coords2))
+# if __name__ == "__main__":
+# 	node1 = Geofence(40.011234, -105.261234)
+# 	print(node1.center_coords)
+# 	coords1 = (40.011234, -105.261234)
+# 	print(node1.in_geofence(coords1))
+#
+# 	center_coords2 = (40.010000, -105.260000)
+# 	node1 = Geofence(*center_coords2)
+# 	print(node1.center_coords)
+# 	coords2 = (40.010000, -105.260000)
+# 	print(node1.in_geofence(coords2))

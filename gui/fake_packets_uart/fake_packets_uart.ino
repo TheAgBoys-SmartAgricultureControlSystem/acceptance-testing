@@ -23,10 +23,10 @@ void node_write(int nodeid, int rssi, float lat, float lng, int soil){
   Serial.print(soil);
   Serial.write("#");
   Serial.write("Latitude:");
-  Serial.write("-105.261234");
+  Serial.write("40.011234");
   Serial.write("#");
   Serial.write("Longitude:");
-  Serial.write("40.011234");
+  Serial.write("-105.261234");
   Serial.write("#");
   Serial.write("RSSI:");
   Serial.print(rssi);
