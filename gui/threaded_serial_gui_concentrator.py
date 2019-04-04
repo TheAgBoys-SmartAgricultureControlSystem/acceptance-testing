@@ -1,5 +1,6 @@
 import collections
 import logging
+from pathlib import Path
 import threading
 from tkinter import *
 from tkinter import ttk
@@ -7,7 +8,7 @@ from tkinter import ttk
 import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
-import entryvalidation
+import entryvalidation as entr
 import geofencing
 import log_mod
 
@@ -39,10 +40,10 @@ class Window(Frame):
 		super(Window, self).__init__()
 		Frame.__init__(self, master)
 
-		self.init_logger = log_mod.setup_logger('init_logger', 'gui_init.log', level=logging.DEBUG)
-		self.nodeStatus_logger = log_mod.setup_logger('node_status_logger', 'gui_nodeStatus.log')
-		self.stream_logger = log_mod.setup_logger('stream_logger', 'gui_stream.log')
-		self.settings_logger = log_mod.setup_logger('settings_logger', 'gui_settings.log')
+		self.init_logger = log_mod.setup_logger('init_logger', log_mod.init_log, level=logging.DEBUG)
+		self.nodeStatus_logger = log_mod.setup_logger('nodeStatus_logger', log_mod.nodeStatus_log)
+		self.stream_logger = log_mod.setup_logger('stream_logger', log_mod.stream_log)
+		self.settings_logger = log_mod.setup_logger('settings_logger', log_mod.settings_log)
 
 		self.init_logger.debug("Window instance created")
 
@@ -228,25 +229,25 @@ class Window(Frame):
 		# node 0 lat label
 		self.node0settingslbl_lat = Label(self.node0settings, text="Latitude")
 		self.node0settingslbl_lat.grid(column=1, row=2)
-		self.node0settingsinp_lat = entryvalidation.FloatEntry(self.node0settings, width=11)
+		self.node0settingsinp_lat = entr.FloatEntry(self.node0settings, width=11)
 		self.node0settingsinp_lat.grid(column=2, row=2)
 		# node 0 lng label
 		self.node0settingslbl_lng = Label(self.node0settings, text="Longitude")
 		self.node0settingslbl_lng.grid(column=1, row=3)
-		self.node0settingsinp_lng = entryvalidation.FloatEntry(self.node0settings, width=11)
+		self.node0settingsinp_lng = entr.FloatEntry(self.node0settings, width=11)
 		self.node0settingsinp_lng.grid(column=2, row=3)
 		# node 0 id label
 		self.node0settingslbl_id = Label(self.node0settings, text="Node ID")
 		self.node0settingslbl_id.grid(column=1, row=4)
-		self.node0settingsinp_id = Entry(self.node0settings, width=3)
+		self.node0settingsinp_id = entr.StrEntry(self.node0settings, width=3)
 		self.node0settingsinp_id.grid(column=2, row=4)
 		# node 0 coords button
 		self.node0settingsbtn_coord = Button(self.node0settings, text="Set Coordinates",
 											 command=lambda: self.set_coords(0))
-		self.node0settingsbtn_coord.grid(column=2, row=4)
+		self.node0settingsbtn_coord.grid(column=2, row=5)
 		# node 0 id button
 		self.node0settingsbtn_id = Button(self.node0settings, text="Set Node ID", command=lambda: self.set_nodeids(0))
-		self.node0settingsbtn_id.grid(column=1, row=4)
+		self.node0settingsbtn_id.grid(column=1, row=5)
 
 		# node 1 settings frame
 		self.node1settings = LabelFrame(self.frame3, width=640, height=240, text="Node 1")
@@ -254,25 +255,25 @@ class Window(Frame):
 		# node 1 lat label
 		self.node1settingslbl_lat = Label(self.node1settings, text="Latitude")
 		self.node1settingslbl_lat.grid(column=1, row=2)
-		self.node1settingsinp_lat = entryvalidation.FloatEntry(self.node1settings, width=11)
+		self.node1settingsinp_lat = entr.FloatEntry(self.node1settings, width=11)
 		self.node1settingsinp_lat.grid(column=2, row=2)
 		# node 1 lng label
 		self.node1settingslbl_lng = Label(self.node1settings, text="Longitude")
 		self.node1settingslbl_lng.grid(column=1, row=3)
-		self.node1settingsinp_lng = entryvalidation.FloatEntry(self.node1settings, width=11)
+		self.node1settingsinp_lng = entr.FloatEntry(self.node1settings, width=11)
 		self.node1settingsinp_lng.grid(column=2, row=3)
 		# node 1 id label
 		self.node1settingslbl_id = Label(self.node1settings, text="Node ID")
 		self.node1settingslbl_id.grid(column=1, row=4)
-		self.node1settingsinp_id = Entry(self.node1settings, width=3)
+		self.node1settingsinp_id = entr.StrEntry(self.node1settings, width=3)
 		self.node1settingsinp_id.grid(column=2, row=4)
 		# node 1 coords button
 		self.node1settingsbtn_coord = Button(self.node1settings, text="Set Coordinates",
 											 command=lambda: self.set_coords(1))
-		self.node1settingsbtn_coord.grid(column=2, row=4)
+		self.node1settingsbtn_coord.grid(column=2, row=5)
 		# node 1 id button
 		self.node1settingsbtn_id = Button(self.node1settings, text="Set Node ID", command=lambda: self.set_nodeids(1))
-		self.node1settingsbtn_id.grid(column=1, row=4)
+		self.node1settingsbtn_id.grid(column=1, row=5)
 
 		# node 2 settings frame
 		self.node2settings = LabelFrame(self.frame3, width=640, height=240, text="Node 2")
@@ -280,25 +281,25 @@ class Window(Frame):
 		# node 2 lat label
 		self.node2settingslbl_lat = Label(self.node2settings, text="Latitude")
 		self.node2settingslbl_lat.grid(column=1, row=2)
-		self.node2settingsinp_lat = entryvalidation.FloatEntry(self.node2settings, width=11)
+		self.node2settingsinp_lat = entr.FloatEntry(self.node2settings, width=11)
 		self.node2settingsinp_lat.grid(column=2, row=2)
 		# node 2 lng label
 		self.node2settingslbl_lng = Label(self.node2settings, text="Longitude")
 		self.node2settingslbl_lng.grid(column=1, row=3)
-		self.node2settingsinp_lng = entryvalidation.FloatEntry(self.node2settings, width=11)
+		self.node2settingsinp_lng = entr.FloatEntry(self.node2settings, width=11)
 		self.node2settingsinp_lng.grid(column=2, row=3)
 		# node 2 id label
 		self.node2settingslbl_id = Label(self.node2settings, text="Node ID")
 		self.node2settingslbl_id.grid(column=1, row=4)
-		self.node2settingsinp_id = Entry(self.node2settings, width=3)
+		self.node2settingsinp_id = entr.StrEntry(self.node2settings, width=3)
 		self.node2settingsinp_id.grid(column=2, row=4)
 		# node 2 coords button
 		self.node2settingsbtn = Button(self.node2settings, text="Set Coordinates",
 									   command=lambda: self.set_coords(2))
-		self.node2settingsbtn.grid(column=2, row=4)
+		self.node2settingsbtn.grid(column=2, row=5)
 		# node 2 id button
 		self.node2settingsbtn_id = Button(self.node2settings, text="Set Node ID", command=lambda: self.set_nodeids(2))
-		self.node2settingsbtn_id.grid(column=1, row=4)
+		self.node2settingsbtn_id.grid(column=1, row=5)
 
 		# node 3 settings frame
 		self.node3settings = LabelFrame(self.frame3, width=640, height=240, text="Node 3")
@@ -306,25 +307,25 @@ class Window(Frame):
 		# node 3 lat label
 		self.node3settingslbl_lat = Label(self.node3settings, text="Latitude")
 		self.node3settingslbl_lat.grid(column=1, row=2)
-		self.node3settingsinp_lat = entryvalidation.FloatEntry(self.node3settings, width=11)
+		self.node3settingsinp_lat = entr.FloatEntry(self.node3settings, width=11)
 		self.node3settingsinp_lat.grid(column=2, row=2)
 		# node 3 lng label
 		self.node3settingslbl_lng = Label(self.node3settings, text="Longitude")
 		self.node3settingslbl_lng.grid(column=1, row=3)
-		self.node3settingsinp_lng = entryvalidation.FloatEntry(self.node3settings, width=11)
+		self.node3settingsinp_lng = entr.FloatEntry(self.node3settings, width=11)
 		self.node3settingsinp_lng.grid(column=2, row=3)
 		# node 3 id label
 		self.node3settingslbl_id = Label(self.node3settings, text="Node ID")
 		self.node3settingslbl_id.grid(column=1, row=4)
-		self.node3settingsinp_id = Entry(self.node3settings, width=3)
+		self.node3settingsinp_id = entr.StrEntry(self.node3settings, width=3)
 		self.node3settingsinp_id.grid(column=2, row=4)
 		# node 3 coords button
 		self.node3settingsbtn_coord = Button(self.node3settings, text="Set Coordinates",
 											 command=lambda: self.set_coords(3))
-		self.node3settingsbtn_coord.grid(column=2, row=4)
+		self.node3settingsbtn_coord.grid(column=2, row=5)
 		# node 3 id button
 		self.node3settingsbtn_id = Button(self.node3settings, text="Set Node ID", command=lambda: self.set_nodeids(3))
-		self.node3settingsbtn_id.grid(column=1, row=4)
+		self.node3settingsbtn_id.grid(column=1, row=5)
 
 		# initialize buttons and other gui stuff
 		self.init_window()
@@ -363,13 +364,13 @@ class Window(Frame):
 					27) + "[2J " + chr(27) + "[0;0H")
 			self.reading = self.reading.rstrip('\n')
 			self.processed_data = str(self.reading)
-			self.stream_logger.debug("Processed Packet String: [%s]", self.processed_data)
 
 			try:
 				# ignore newline lines
 				if str(self.processed_data).isspace():
 					pass
 				else:
+					self.stream_logger.info("Processed Packet String: [%s]", self.processed_data.rstrip('\r\n'))
 					# send serial output packets to serial output frame
 					self.serialout.configure(text=self.processed_data)
 					# split packet into variables
@@ -569,8 +570,8 @@ class Window(Frame):
 try:
 	root = Tk()
 	Window(root)
-	root.mainloop()
 	log_mod.gui_logger.info("GUI instance started")
+	root.mainloop()
 except RuntimeError:
 	print("A Fatal Error Occurred")
 	log_mod.gui_logger.critical("Fatal Runtime Error")
