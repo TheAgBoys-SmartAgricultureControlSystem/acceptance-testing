@@ -1,6 +1,5 @@
 import collections
 import logging
-from pathlib import Path
 import threading
 from tkinter import *
 from tkinter import ttk
@@ -8,10 +7,10 @@ from tkinter import ttk
 import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
-import uploader as tx
 import entryvalidation as entr
 import geofencing
 import log_mod
+import uploader as tx
 
 
 # logging.basicConfig(level=logging.DEBUG, filename='gui.log', filemode='a',
@@ -83,6 +82,11 @@ class Window(Frame):
 		self.node1id = '11'
 		self.node2id = '12'
 		self.node3id = '13'
+
+		self.node0soil = 1000
+		self.node1soil = 1100
+		self.node2soil = 1200
+		self.node3soil = 1300
 
 		# start scheduler for background tasks (i.e. refresh)
 		self.scheduler = BackgroundScheduler()
@@ -242,13 +246,11 @@ class Window(Frame):
 		self.node0settingslbl_id.grid(column=1, row=4)
 		self.node0settingsinp_id = entr.StrEntry(self.node0settings, width=3)
 		self.node0settingsinp_id.grid(column=2, row=4)
-		# node 0 coords button
-		self.node0settingsbtn_coord = Button(self.node0settings, text="Set Coordinates",
-											 command=lambda: self.set_coords(0))
-		self.node0settingsbtn_coord.grid(column=2, row=5)
-		# node 0 id button
-		self.node0settingsbtn_id = Button(self.node0settings, text="Set Node ID", command=lambda: self.set_nodeids(0))
-		self.node0settingsbtn_id.grid(column=1, row=5)
+		# node 0 soil label
+		self.node0settingslbl_soil = Label(self.node0settings, text="Soil Moisture")
+		self.node0settingslbl_soil.grid(column=1, row=5)
+		self.node0settingsinp_soil = entr.IntEntry(self.node0settings, width=4)
+		self.node0settingsinp_soil.grid(column=2, row=5)
 
 		# node 1 settings frame
 		self.node1settings = LabelFrame(self.frame3, width=640, height=240, text="Node 1")
@@ -268,13 +270,11 @@ class Window(Frame):
 		self.node1settingslbl_id.grid(column=1, row=4)
 		self.node1settingsinp_id = entr.StrEntry(self.node1settings, width=3)
 		self.node1settingsinp_id.grid(column=2, row=4)
-		# node 1 coords button
-		self.node1settingsbtn_coord = Button(self.node1settings, text="Set Coordinates",
-											 command=lambda: self.set_coords(1))
-		self.node1settingsbtn_coord.grid(column=2, row=5)
-		# node 1 id button
-		self.node1settingsbtn_id = Button(self.node1settings, text="Set Node ID", command=lambda: self.set_nodeids(1))
-		self.node1settingsbtn_id.grid(column=1, row=5)
+		# node 1 soil label
+		self.node1settingslbl_soil = Label(self.node1settings, text="Soil Moisture")
+		self.node1settingslbl_soil.grid(column=1, row=5)
+		self.node1settingsinp_soil = entr.IntEntry(self.node1settings, width=4)
+		self.node1settingsinp_soil.grid(column=2, row=5)
 
 		# node 2 settings frame
 		self.node2settings = LabelFrame(self.frame3, width=640, height=240, text="Node 2")
@@ -294,13 +294,11 @@ class Window(Frame):
 		self.node2settingslbl_id.grid(column=1, row=4)
 		self.node2settingsinp_id = entr.StrEntry(self.node2settings, width=3)
 		self.node2settingsinp_id.grid(column=2, row=4)
-		# node 2 coords button
-		self.node2settingsbtn = Button(self.node2settings, text="Set Coordinates",
-									   command=lambda: self.set_coords(2))
-		self.node2settingsbtn.grid(column=2, row=5)
-		# node 2 id button
-		self.node2settingsbtn_id = Button(self.node2settings, text="Set Node ID", command=lambda: self.set_nodeids(2))
-		self.node2settingsbtn_id.grid(column=1, row=5)
+		# node 2 soil label
+		self.node2settingslbl_soil = Label(self.node2settings, text="Soil Moisture")
+		self.node2settingslbl_soil.grid(column=1, row=5)
+		self.node2settingsinp_soil = entr.IntEntry(self.node2settings, width=4)
+		self.node2settingsinp_soil.grid(column=2, row=5)
 
 		# node 3 settings frame
 		self.node3settings = LabelFrame(self.frame3, width=640, height=240, text="Node 3")
@@ -320,13 +318,11 @@ class Window(Frame):
 		self.node3settingslbl_id.grid(column=1, row=4)
 		self.node3settingsinp_id = entr.StrEntry(self.node3settings, width=3)
 		self.node3settingsinp_id.grid(column=2, row=4)
-		# node 3 coords button
-		self.node3settingsbtn_coord = Button(self.node3settings, text="Set Coordinates",
-											 command=lambda: self.set_coords(3))
-		self.node3settingsbtn_coord.grid(column=2, row=5)
-		# node 3 id button
-		self.node3settingsbtn_id = Button(self.node3settings, text="Set Node ID", command=lambda: self.set_nodeids(3))
-		self.node3settingsbtn_id.grid(column=1, row=5)
+		# node 3 soil label
+		self.node3settingslbl_soil = Label(self.node3settings, text="Soil Moisture")
+		self.node3settingslbl_soil.grid(column=1, row=5)
+		self.node3settingsinp_soil = entr.IntEntry(self.node3settings, width=4)
+		self.node3settingsinp_soil.grid(column=2, row=5)
 
 		# initialize buttons and other gui stuff
 		self.init_window()
@@ -348,11 +344,63 @@ class Window(Frame):
 		self.refreshButton.grid(column=2, row=0)
 
 		# label for serial output in serial output frame
-		self.serialout = ttk.Label(self.frame2, text='999', background='#000', foreground='#fff', anchor=W, width=70)
+		self.serialout = ttk.Label(self.frame2, text='999', background='#000', foreground='#fff', anchor=W, width=75)
 		self.serialout.grid(column=0, row=0)
 
 		self.quitConnection = ttk.Button(self.genstatus, text="Exit", command=self.connection_exit)
 		self.quitConnection.grid(column=0, row=0)
+
+		# node 0 coords button
+		self.node0settingsbtn_coord = Button(self.node0settings, text="Set Coordinates",
+											 command=lambda: self.set_coords(0))
+		self.node0settingsbtn_coord.grid(column=2, row=6)
+		# node 0 id button
+		self.node0settingsbtn_id = Button(self.node0settings, text="Set Node ID", command=lambda: self.set_nodeids(0))
+		self.node0settingsbtn_id.grid(column=1, row=7)
+
+		# node 0 soil moisture button
+		self.node0settingsbtn_soil = Button(self.node0settings, text="Set Soil Moisture",
+											command=lambda: self.set_nodesoil(0))
+		self.node0settingsbtn_soil.grid(column=1, row=6)
+
+		# node 1 coords button
+		self.node1settingsbtn_coord = Button(self.node1settings, text="Set Coordinates",
+											 command=lambda: self.set_coords(1))
+		self.node1settingsbtn_coord.grid(column=2, row=6)
+		# node 1 id button
+		self.node1settingsbtn_id = Button(self.node1settings, text="Set Node ID", command=lambda: self.set_nodeids(1))
+		self.node1settingsbtn_id.grid(column=1, row=7)
+
+		# node 1 soil moisture button
+		self.node1settingsbtn_soil = Button(self.node1settings, text="Set Soil Moisture",
+											command=lambda: self.set_nodesoil(1))
+		self.node1settingsbtn_soil.grid(column=1, row=6)
+
+		# node 2 coords button
+		self.node2settingsbtn = Button(self.node2settings, text="Set Coordinates",
+									   command=lambda: self.set_coords(2))
+		self.node2settingsbtn.grid(column=2, row=6)
+		# node 2 id button
+		self.node2settingsbtn_id = Button(self.node2settings, text="Set Node ID", command=lambda: self.set_nodeids(2))
+		self.node2settingsbtn_id.grid(column=1, row=7)
+
+		# node 2 soil moisture button
+		self.node2settingsbtn_soil = Button(self.node2settings, text="Set Soil Moisture",
+											command=lambda: self.set_nodesoil(2))
+		self.node2settingsbtn_soil.grid(column=1, row=6)
+
+		# node 3 coords button
+		self.node3settingsbtn_coord = Button(self.node3settings, text="Set Coordinates",
+											 command=lambda: self.set_coords(3))
+		self.node3settingsbtn_coord.grid(column=2, row=6)
+		# node 3 id button
+		self.node3settingsbtn_id = Button(self.node3settings, text="Set Node ID", command=lambda: self.set_nodeids(3))
+		self.node3settingsbtn_id.grid(column=1, row=7)
+
+		# node 3 soil moisture button
+		self.node3settingsbtn_soil = Button(self.node3settings, text="Set Soil Moisture",
+											command=lambda: self.set_nodesoil(3))
+		self.node3settingsbtn_soil.grid(column=1, row=6)
 
 		self.init_logger.debug("GUI fleshed out")
 
@@ -445,20 +493,25 @@ class Window(Frame):
 
 		# set node status based on rssi, coords
 		try:
-			# get fresh coords from stream input
-			self.latitude_str0 = self.node0settingsinp_lat.get()
-			self.longitude_str0 = self.node0settingsinp_lng.get()
-			self.latitude_str1 = self.node1settingsinp_lat.get()
-			self.longitude_str1 = self.node1settingsinp_lng.get()
-			self.latitude_str2 = self.node2settingsinp_lat.get()
-			self.longitude_str2 = self.node2settingsinp_lng.get()
-			self.latitude_str3 = self.node3settingsinp_lat.get()
-			self.longitude_str3 = self.node3settingsinp_lng.get()
-			# get fresh node ids from stream input
-			self.node0id = self.node0settingsinp_id.get()
-			self.node1id = self.node1settingsinp_id.get()
-			self.node2id = self.node2settingsinp_id.get()
-			self.node3id = self.node3settingsinp_id.get()
+			# # get fresh coords from stream input
+			# self.latitude_str0 = self.node0settingsinp_lat.get()
+			# self.longitude_str0 = self.node0settingsinp_lng.get()
+			# self.latitude_str1 = self.node1settingsinp_lat.get()
+			# self.longitude_str1 = self.node1settingsinp_lng.get()
+			# self.latitude_str2 = self.node2settingsinp_lat.get()
+			# self.longitude_str2 = self.node2settingsinp_lng.get()
+			# self.latitude_str3 = self.node3settingsinp_lat.get()
+			# self.longitude_str3 = self.node3settingsinp_lng.get()
+			# # get fresh node ids from stream input
+			# self.node0id = self.node0settingsinp_id.get()
+			# self.node1id = self.node1settingsinp_id.get()
+			# self.node2id = self.node2settingsinp_id.get()
+			# self.node3id = self.node3settingsinp_id.get()
+			# get fresh soil
+			self.node0soil = self.node0settingsinp_soil.get()
+			self.node1soil = self.node1settingsinp_soil.get()
+			self.node2soil = self.node2settingsinp_soil.get()
+			self.node3soil = self.node3settingsinp_soil.get()
 
 			# print("Input coords:")
 			# print((float(Nodes.node0.lat), float(Nodes.node0.lng)))
@@ -466,29 +519,37 @@ class Window(Frame):
 			# print(Nodes.node0_center.center_coords)
 			# print(Nodes.node0_center.in_geofence((float(Nodes.node0.lat), float(Nodes.node0.lng))))
 
-			if (int(Nodes.node0.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence(
-					(float(Nodes.node0.lat), float(Nodes.node0.lng))):
+			if ((int(Nodes.node0.rssi) >= int(self.rssi_min)) and (Nodes.node0_center.in_geofence(
+					(float(Nodes.node0.lat), float(Nodes.node0.lng)))) and (
+					int(Nodes.node0.soil) <= (self.node0soil + 100) and int(Nodes.node0.soil) >= (
+					self.node0soil - 100))):
 				self.node0labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
 			else:
 				self.node0labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)
-			if (int(Nodes.node1.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence(
-					(float(Nodes.node1.lat), float(Nodes.node1.lng))):
+			if ((int(Nodes.node1.rssi) >= int(self.rssi_min)) and (Nodes.node1_center.in_geofence(
+					(float(Nodes.node1.lat), float(Nodes.node1.lng)))) and (
+					int(Nodes.node1.soil) <= (self.node1soil + 100) and int(Nodes.node1.soil) >= (
+					self.node1soil - 100))):
 				self.node1labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
 			else:
 				self.node1labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)
-			if (int(Nodes.node2.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence(
-					(float(Nodes.node2.lat), float(Nodes.node2.lng))):
+			if ((int(Nodes.node2.rssi) >= int(self.rssi_min)) and (Nodes.node2_center.in_geofence(
+					(float(Nodes.node2.lat), float(Nodes.node2.lng)))) and (
+					int(Nodes.node2.soil) <= (self.node2soil + 100) and int(Nodes.node2.soil) >= (
+					self.node2soil - 100))):
 				self.node2labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
 			else:
 				self.node2labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)
-			if (int(Nodes.node3.rssi) >= int(self.rssi_min)) and Nodes.node0_center.in_geofence(
-					(float(Nodes.node3.lat), float(Nodes.node3.lng))):
+			if ((int(Nodes.node3.rssi) >= int(self.rssi_min)) and (Nodes.node3_center.in_geofence(
+					(float(Nodes.node3.lat), float(Nodes.node3.lng)))) and (
+					int(Nodes.node3.soil) <= (self.node3soil + 100) and int(Nodes.node3.soil) >= (
+					self.node3soil - 100))):
 				self.node3labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
 			else:
@@ -511,61 +572,86 @@ class Window(Frame):
 		print("Setting Node IDs for Node " + str(node))
 		self.settings_logger.info("Setting Node IDs for Node " + str(node))
 
-		self.node0id = self.node0settingsinp_id.get()
-		self.node1id = self.node1settingsinp_id.get()
-		self.node2id = self.node2settingsinp_id.get()
-		self.node3id = self.node3settingsinp_id.get()
-
 		if node == 0:
+			self.node0id = self.node0settingsinp_id.get()
 			print("Node ID for Node 0 set to " + self.node0id)
 			self.settings_logger.info("Node ID for Node 0 set to " + self.node0id)
 		elif node == 1:
+			self.node1id = self.node1settingsinp_id.get()
 			print("Node ID for Node 1 set to " + self.node1id)
 			self.settings_logger.info("Node ID for Node 1 set to " + self.node1id)
 		elif node == 2:
+			self.node2id = self.node2settingsinp_id.get()
 			print("Node ID for Node 2 set to " + self.node2id)
 			self.settings_logger.info("Node ID for Node 2 set to " + self.node2id)
 		elif node == 3:
+			self.node3id = self.node3settingsinp_id.get()
 			print("Node ID for Node 3 set to " + self.node3id)
 			self.settings_logger.info("Node ID for Node 3 set to " + self.node3id)
 		else:
-			pass
+			self.settings_logger.warning("Failed Setting Node ID: Malformed input " + str(node))
+
+	def set_nodesoil(self, node):
+		print("Setting Node Soil Moisture Level for Node " + str(node))
+		self.settings_logger.info("Setting Soil Moisture Level for Node " + str(node))
+
+		if node == 0:
+			self.node0soil = self.node0settingsinp_soil.get()
+			print("Node Soil Moisture Level for Node 0 set to " + self.node0soil)
+			self.settings_logger.info("Node Soil Moisture Level for Node 0 set to " + self.node0soil)
+		elif node == 1:
+			self.node1soil = self.node1settingsinp_soil.get()
+			print("Node Soil Moisture Level for Node 1 set to " + self.node1soil)
+			self.settings_logger.info("Node Soil Moisture Level for Node 1 set to " + self.node1soil)
+		elif node == 2:
+			self.node2soil = self.node2settingsinp_soil.get()
+			print("Node Soil Moisture Level for Node 2 set to " + self.node2soil)
+			self.settings_logger.info("Node Soil Moisture Level for Node 2 set to " + self.node2soil)
+		elif node == 3:
+			self.node3soil = self.node3settingsinp_soil.get()
+			print("Node Soil Moisture Level for Node 3 set to " + self.node3soil)
+			self.settings_logger.info("Node Soil Moisture Level for Node 3 set to " + self.node3soil)
+		else:
+			self.settings_logger.warning("Failed Setting Node Soil Moisture Level: Malformed input " + str(node))
 
 	def set_coords(self, node):
 		print("Setting Coords for Node " + str(node))
 		self.settings_logger.info("Setting Coords for Node " + str(node))
 
-		self.latitude_str0 = self.node0settingsinp_lat.get()
-		self.longitude_str0 = self.node0settingsinp_lng.get()
-		self.latitude_str1 = self.node1settingsinp_lat.get()
-		self.longitude_str1 = self.node1settingsinp_lng.get()
-		self.latitude_str2 = self.node2settingsinp_lat.get()
-		self.longitude_str2 = self.node2settingsinp_lng.get()
-		self.latitude_str3 = self.node3settingsinp_lat.get()
-		self.longitude_str3 = self.node3settingsinp_lng.get()
-
 		if node == 0:
+			self.latitude_str0 = self.node0settingsinp_lat.get()
+			self.longitude_str0 = self.node0settingsinp_lng.get()
 			Nodes.node0_center = geofencing.Geofence(float(self.latitude_str0), float(self.longitude_str0))
-			self.settings_logger.info("Coords for Node " + str(node) + " set to " + str(self.node0settingsinp_lat.get()) + "," + str(
-				self.node0settingsinp_lng.get()))
+			self.settings_logger.info(
+				"Coords for Node " + str(node) + " set to " + str(self.node0settingsinp_lat.get()) + "," + str(
+					self.node0settingsinp_lng.get()))
 			self.settings_logger.info(Nodes.node0_center.center_coords)
 		elif node == 1:
+			self.latitude_str1 = self.node1settingsinp_lat.get()
+			self.longitude_str1 = self.node1settingsinp_lng.get()
 			Nodes.node1_center = geofencing.Geofence(float(self.latitude_str1), float(self.longitude_str1))
-			self.settings_logger.info("Coords for Node " + str(node) + " set to " + str(self.node1settingsinp_lat.get()) + "," + str(
-				self.node1settingsinp_lng.get()))
+			self.settings_logger.info(
+				"Coords for Node " + str(node) + " set to " + str(self.node1settingsinp_lat.get()) + "," + str(
+					self.node1settingsinp_lng.get()))
 			self.settings_logger.info(Nodes.node1_center.center_coords)
 		elif node == 2:
+			self.latitude_str2 = self.node2settingsinp_lat.get()
+			self.longitude_str2 = self.node2settingsinp_lng.get()
 			Nodes.node2_center = geofencing.Geofence(float(self.latitude_str2), float(self.longitude_str2))
-			self.settings_logger.info("Coords for Node " + str(node) + " set to " + str(self.node2settingsinp_lat.get()) + "," + str(
-				self.node2settingsinp_lng.get()))
+			self.settings_logger.info(
+				"Coords for Node " + str(node) + " set to " + str(self.node2settingsinp_lat.get()) + "," + str(
+					self.node2settingsinp_lng.get()))
 			self.settings_logger.info(Nodes.node2_center.center_coords)
 		elif node == 3:
+			self.latitude_str3 = self.node3settingsinp_lat.get()
+			self.longitude_str3 = self.node3settingsinp_lng.get()
 			Nodes.node3_center = geofencing.Geofence(float(self.latitude_str3), float(self.longitude_str3))
-			self.settings_logger.info("Coords for Node " + str(node) + " set to " + str(self.node3settingsinp_lat.get()) + "," + str(
-				self.node3settingsinp_lng.get()))
+			self.settings_logger.info(
+				"Coords for Node " + str(node) + " set to " + str(self.node3settingsinp_lat.get()) + "," + str(
+					self.node3settingsinp_lng.get()))
 			self.settings_logger.info(Nodes.node3_center.center_coords)
 		else:
-			pass
+			self.settings_logger.warning("Failed Setting Node Coords: Malformed input " + str(node))
 
 
 # initialize and start instance of gui

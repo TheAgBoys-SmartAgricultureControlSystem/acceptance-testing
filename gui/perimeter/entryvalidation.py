@@ -32,7 +32,7 @@ class FloatEntry(Entry):
 class IntEntry(Entry):
 
 	def __init__(self, *args, **kwargs):
-		initial_value = kwargs.pop('initial_value', '99')
+		initial_value = kwargs.pop('initial_value', '999')
 		assert self.validate(initial_value), 'Invalid initial_value given'
 		self.last_valid_value = initial_value
 		self.text = StringVar(value=initial_value)

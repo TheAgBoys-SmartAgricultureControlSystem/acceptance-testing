@@ -4,3 +4,39 @@
 2019-04-05 10:20:36,582 - MainProcess:DEBUG - __init__: Finished building gui skeleton
 2019-04-05 10:20:36,596 - MainProcess:DEBUG - init_window: GUI fleshed out
 2019-04-05 10:20:36,646 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-05 13:41:03,934 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-05 13:41:03,937 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-05 13:41:04,105 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-05 13:41:04,138 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-05 13:41:04,164 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-05 13:41:04,224 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-05 13:41:40,659 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-05 13:41:40,661 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-05 13:41:40,820 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-05 13:41:40,849 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-05 13:41:40,871 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-05 13:41:40,922 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-05 13:43:11,733 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-05 13:43:11,735 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-05 13:43:11,903 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-05 13:43:11,938 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-05 13:43:11,963 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-05 13:43:12,018 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-05 13:43:39,431 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-05 13:43:39,435 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-05 13:43:39,652 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-05 13:43:39,682 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-05 13:43:39,706 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-05 13:43:39,773 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-05 13:44:42,205 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-05 13:44:42,206 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-05 13:44:42,370 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-05 13:44:42,397 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-05 13:44:42,418 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-05 13:44:42,470 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-05 13:57:19,244 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-05 13:57:19,247 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-05 13:57:19,405 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-05 13:57:19,435 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-05 13:57:19,455 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-05 13:57:19,509 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
