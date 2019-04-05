@@ -8,6 +8,7 @@ from tkinter import ttk
 import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import uploader as tx
 import entryvalidation as entr
 import geofencing
 import log_mod
@@ -334,6 +335,7 @@ class Window(Frame):
 		self.thread = threading.Thread(target=self.read_from_port, args=())
 		self.thread.daemon = True
 		self.scheduler.add_job(self.refresh_sensor_status, 'interval', seconds=20)
+		self.scheduler.add_job(tx.transmit_latest_stream_log, 'cron', day_of_week='mon', hour=7, minute=0)
 		self.scheduler.start()
 		self.thread.start()
 
