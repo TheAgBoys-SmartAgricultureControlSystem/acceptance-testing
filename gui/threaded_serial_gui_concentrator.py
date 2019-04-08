@@ -92,10 +92,10 @@ class Window(Frame):
 		self.scheduler = BackgroundScheduler()
 		self.init_logger.info("Background Scheduler Started")
 
-		# general status frame
+		# general pump_status frame
 		self.genstatus = LabelFrame(master, width=640, height=240, text="General Status")
 		self.genstatus.pack()
-		# subsystem status frame
+		# subsystem pump_status frame
 		self.substatus = LabelFrame(master, width=640, height=240, text="Subsystem Status")
 		self.substatus.pack()
 
@@ -110,9 +110,9 @@ class Window(Frame):
 		self.frame3 = ttk.Frame(self.notebook)
 		self.notebook.add(self.frame3, text='Settings')
 
-		# set status frames and labels for 4 sensor nodes
+		# set pump_status frames and labels for 4 sensor nodes
 
-		# node 0 status frame
+		# node 0 pump_status frame
 		self.nodeframe0 = ttk.LabelFrame(self.frame1, text='Node 0')
 		self.nodeframe0.grid(column=0, row=0)
 		self.node0labelnodeid = ttk.Label(self.nodeframe0, text='NodeID')
@@ -140,7 +140,7 @@ class Window(Frame):
 		self.node0labelstatusres = ttk.Label(self.nodeframe0, text='ERROR', background='#f00', foreground='#fff')
 		self.node0labelstatusres.grid(column=1, row=5)
 
-		# node 1 status frame
+		# node 1 pump_status frame
 		self.nodeframe1 = ttk.LabelFrame(self.frame1, text='Node 1')
 		self.nodeframe1.grid(column=0, row=1)
 		self.node1labelnodeid = ttk.Label(self.nodeframe1, text='NodeID')
@@ -168,7 +168,7 @@ class Window(Frame):
 		self.node1labelstatusres = ttk.Label(self.nodeframe1, text='ERROR', background='#f00', foreground='#fff')
 		self.node1labelstatusres.grid(column=1, row=5)
 
-		# node 2 status frame
+		# node 2 pump_status frame
 		self.nodeframe2 = ttk.LabelFrame(self.frame1, text='Node 2')
 		self.nodeframe2.grid(column=1, row=0)
 		self.node2labelnodeid = ttk.Label(self.nodeframe2, text='NodeID')
@@ -196,7 +196,7 @@ class Window(Frame):
 		self.node2labelstatusres = ttk.Label(self.nodeframe2, text='ERROR', background='#f00', foreground='#fff')
 		self.node2labelstatusres.grid(column=1, row=5)
 
-		# node 3 status frame
+		# node 3 pump_status frame
 		self.nodeframe3 = ttk.LabelFrame(self.frame1, text='Node 3')
 		self.nodeframe3.grid(column=1, row=1)
 		self.node3labelnodeid = ttk.Label(self.nodeframe3, text='NodeID')
@@ -327,7 +327,7 @@ class Window(Frame):
 		# initialize buttons and other gui stuff
 		self.init_window()
 
-		# daemonize and start threading for serial port reading and sensor status refreshing
+		# daemonize and start threading for serial port reading and sensor pump_status refreshing
 		self.thread = threading.Thread(target=self.read_from_port, args=())
 		self.thread.daemon = True
 		self.scheduler.add_job(self.refresh_sensor_status, 'interval', seconds=20)
@@ -339,7 +339,7 @@ class Window(Frame):
 
 	def init_window(self):
 		self.master.title("Smart Agriculture Control System Interface")
-		# button for refreshing sensor status
+		# button for refreshing sensor pump_status
 		self.refreshButton = ttk.Button(self.frame1, text="Refresh", command=self.refresh_sensor_status)
 		self.refreshButton.grid(column=2, row=0)
 
@@ -462,7 +462,7 @@ class Window(Frame):
 	def refresh_sensor_status(self):
 		print("Sensor Status Refreshed")
 		self.nodeStatus_logger.info("Sensor Status Refreshed")
-		# set node frames in sensor status frame to fresh values
+		# set node frames in sensor pump_status frame to fresh values
 		self.node0labelnodeidres.configure(text=Nodes.node0.nodeid)
 		self.node0labelrssires.configure(text=Nodes.node0.rssi)
 		self.node0labellatres.configure(text=Nodes.node0.lat)
@@ -491,7 +491,7 @@ class Window(Frame):
 		self.node3labelsoilres.configure(text=Nodes.node3.soil)
 		self.nodeStatus_logger.debug("Node 3 refreshed")
 
-		# set node status based on rssi, coords
+		# set node pump_status based on rssi, coords
 		try:
 			# # get fresh coords from stream input
 			# self.latitude_str0 = self.node0settingsinp_lat.get()
@@ -558,7 +558,7 @@ class Window(Frame):
 
 			self.nodeStatus_logger.info("Node Status Set")
 		except TypeError:
-			self.nodeStatus_logger.error("Type Error in setting Node status")
+			self.nodeStatus_logger.error("Type Error in setting Node pump_status")
 			pass
 
 	def connection_exit(self):  # processes button press to close serial session and exit the program
