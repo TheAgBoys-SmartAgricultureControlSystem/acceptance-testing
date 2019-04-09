@@ -18,11 +18,13 @@ def transmit_latest_stream_log():
 			filenameslistfirst = glob.glob(str(log_folderstream / 'gui_stream.log'))
 			latest_log = max(filenameslistfirst, key=os.path.getctime)
 			initial_log = False
-			subprocess.call(["obexftp", "-b", bt_address, "-c", "/PHONE_MEMORY/ftp", "-p", latest_log])
+			subprocess.check_call(["obexftp", "-b", bt_address, "-c", "/PHONE_MEMORY/ftp", "-p", latest_log])
 		else:
 			filenameslist = glob.glob(str(log_folderstream / 'gui_stream.log.*'))
 			latest_log = max(filenameslist, key=os.path.getctime)
-			subprocess.call(["obexftp", "-b", bt_address, "-c", "/PHONE_MEMORY/ftp", "-p", latest_log])
+			subprocess.check_call(["obexftp", "-b", bt_address, "-c", "/PHONE_MEMORY/ftp", "-p", latest_log])
 	except subprocess.CalledProcessError as e:
-		upload_logger.critical("Subprocess Error: %s", e)
+		upload_logger.error("Subprocess Error: ", e)
+	except subprocess.TimeoutExpired:
+		upload_logger.error("Subprocess Timed Out")
 

@@ -8,6 +8,7 @@ import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import entryvalidation as entr
+import irrigation_control as irr
 import geofencing
 import log_mod
 import uploader as tx
@@ -103,17 +104,19 @@ class Window(Frame):
 		self.notebook = ttk.Notebook(self.substatus)
 		self.notebook.pack()
 		# set frames for notebook
-		self.frame1 = ttk.Frame(self.notebook)
-		self.notebook.add(self.frame1, text='Sensor Status')
-		self.frame2 = ttk.Frame(self.notebook)
-		self.notebook.add(self.frame2, text='Serial Output')
-		self.frame3 = ttk.Frame(self.notebook)
-		self.notebook.add(self.frame3, text='Settings')
+		self.sensorstatus = ttk.Frame(self.notebook)
+		self.notebook.add(self.sensorstatus, text='Sensor Status')
+		self.irrigationstatus = ttk.Frame(self.notebook)
+		self.notebook.add(self.irrigationstatus, text='Irrigation Status')
+		self.settings = ttk.Frame(self.notebook)
+		self.notebook.add(self.settings, text='Settings')
+		self.serialout = ttk.Frame(self.notebook)
+		self.notebook.add(self.serialout, text='Serial Output')
 
 		# set pump_status frames and labels for 4 sensor nodes
 
 		# node 0 pump_status frame
-		self.nodeframe0 = ttk.LabelFrame(self.frame1, text='Node 0')
+		self.nodeframe0 = ttk.LabelFrame(self.sensorstatus, text='Node 0')
 		self.nodeframe0.grid(column=0, row=0)
 		self.node0labelnodeid = ttk.Label(self.nodeframe0, text='NodeID')
 		self.node0labelnodeid.grid(column=0, row=0)
@@ -141,7 +144,7 @@ class Window(Frame):
 		self.node0labelstatusres.grid(column=1, row=5)
 
 		# node 1 pump_status frame
-		self.nodeframe1 = ttk.LabelFrame(self.frame1, text='Node 1')
+		self.nodeframe1 = ttk.LabelFrame(self.sensorstatus, text='Node 1')
 		self.nodeframe1.grid(column=0, row=1)
 		self.node1labelnodeid = ttk.Label(self.nodeframe1, text='NodeID')
 		self.node1labelnodeid.grid(column=0, row=0)
@@ -169,7 +172,7 @@ class Window(Frame):
 		self.node1labelstatusres.grid(column=1, row=5)
 
 		# node 2 pump_status frame
-		self.nodeframe2 = ttk.LabelFrame(self.frame1, text='Node 2')
+		self.nodeframe2 = ttk.LabelFrame(self.sensorstatus, text='Node 2')
 		self.nodeframe2.grid(column=1, row=0)
 		self.node2labelnodeid = ttk.Label(self.nodeframe2, text='NodeID')
 		self.node2labelnodeid.grid(column=0, row=0)
@@ -197,7 +200,7 @@ class Window(Frame):
 		self.node2labelstatusres.grid(column=1, row=5)
 
 		# node 3 pump_status frame
-		self.nodeframe3 = ttk.LabelFrame(self.frame1, text='Node 3')
+		self.nodeframe3 = ttk.LabelFrame(self.sensorstatus, text='Node 3')
 		self.nodeframe3.grid(column=1, row=1)
 		self.node3labelnodeid = ttk.Label(self.nodeframe3, text='NodeID')
 		self.node3labelnodeid.grid(column=0, row=0)
@@ -229,7 +232,7 @@ class Window(Frame):
 		# node settings frame
 
 		# node 0 settings frame
-		self.node0settings = LabelFrame(self.frame3, width=640, height=240, text="Node 0")
+		self.node0settings = LabelFrame(self.settings, width=640, height=240, text="Node 0")
 		self.node0settings.grid(column=0, row=0)
 		# node 0 lat label
 		self.node0settingslbl_lat = Label(self.node0settings, text="Latitude")
@@ -253,7 +256,7 @@ class Window(Frame):
 		self.node0settingsinp_soil.grid(column=2, row=5)
 
 		# node 1 settings frame
-		self.node1settings = LabelFrame(self.frame3, width=640, height=240, text="Node 1")
+		self.node1settings = LabelFrame(self.settings, width=640, height=240, text="Node 1")
 		self.node1settings.grid(column=0, row=1)
 		# node 1 lat label
 		self.node1settingslbl_lat = Label(self.node1settings, text="Latitude")
@@ -277,7 +280,7 @@ class Window(Frame):
 		self.node1settingsinp_soil.grid(column=2, row=5)
 
 		# node 2 settings frame
-		self.node2settings = LabelFrame(self.frame3, width=640, height=240, text="Node 2")
+		self.node2settings = LabelFrame(self.settings, width=640, height=240, text="Node 2")
 		self.node2settings.grid(column=1, row=0)
 		# node 2 lat label
 		self.node2settingslbl_lat = Label(self.node2settings, text="Latitude")
@@ -301,7 +304,7 @@ class Window(Frame):
 		self.node2settingsinp_soil.grid(column=2, row=5)
 
 		# node 3 settings frame
-		self.node3settings = LabelFrame(self.frame3, width=640, height=240, text="Node 3")
+		self.node3settings = LabelFrame(self.settings, width=640, height=240, text="Node 3")
 		self.node3settings.grid(column=1, row=1)
 		# node 3 lat label
 		self.node3settingslbl_lat = Label(self.node3settings, text="Latitude")
@@ -324,6 +327,40 @@ class Window(Frame):
 		self.node3settingsinp_soil = entr.IntEntry(self.node3settings, width=4)
 		self.node3settingsinp_soil.grid(column=2, row=5)
 
+		# pump and valve settings
+		self.pumpsettings = LabelFrame(self.genstatus, width=320, height=240, text="Irrigation Status")
+		self.pumpsettings.grid(column=2, row=0)
+		self.pumpsettlingslbl = Label(self.pumpsettings, text="Pump")
+		self.pumpsettlingslbl.grid(column=0, row=0)
+
+		self.valvecontrol = LabelFrame(self.irrigationstatus, width=640, height=240, text="Valve Control")
+		self.valvecontrol.grid(column=0, row=0)
+
+		# valve control 0
+		self.valveframe0 = ttk.LabelFrame(self.valvecontrol, text='Valve 0')
+		self.valveframe0.grid(column=0, row=0)
+		self.valve0labelstatus = ttk.Label(self.valveframe0, text='Status')
+		self.valve0labelstatus.grid(column=0, row=0)
+		self.valve0labelstatus = ttk.Label(self.pumpsettings, text='Valve 0: N/A')
+		self.valve0labelstatus.grid(column=2, row=0)
+
+		# valve control 1
+		self.valveframe1 = ttk.LabelFrame(self.valvecontrol, text='Valve 1')
+		self.valveframe1.grid(column=0, row=1)
+		self.valve1labelstatus = ttk.Label(self.valveframe1, text='Status')
+		self.valve1labelstatus.grid(column=0, row=0)
+		self.valve1labelstatus = ttk.Label(self.pumpsettings, text='Valve 1: N/A')
+		self.valve1labelstatus.grid(column=3, row=0)
+
+		# valve control 2
+		self.valveframe2 = ttk.LabelFrame(self.valvecontrol, text='Valve 2')
+		self.valveframe2.grid(column=0, row=2)
+		self.valve2labelstatus = ttk.Label(self.valveframe2, text='Status')
+		self.valve2labelstatus.grid(column=0, row=0)
+		self.valve2labelstatus = ttk.Label(self.pumpsettings, text='Valve 2: N/A')
+		self.valve2labelstatus.grid(column=4, row=0)
+
+
 		# initialize buttons and other gui stuff
 		self.init_window()
 
@@ -340,11 +377,11 @@ class Window(Frame):
 	def init_window(self):
 		self.master.title("Smart Agriculture Control System Interface")
 		# button for refreshing sensor pump_status
-		self.refreshButton = ttk.Button(self.frame1, text="Refresh", command=self.refresh_sensor_status)
+		self.refreshButton = ttk.Button(self.sensorstatus, text="Refresh", command=self.refresh_sensor_status)
 		self.refreshButton.grid(column=2, row=0)
 
 		# label for serial output in serial output frame
-		self.serialout = ttk.Label(self.frame2, text='999', background='#000', foreground='#fff', anchor=W, width=75)
+		self.serialout = ttk.Label(self.serialout, text='999', background='#000', foreground='#fff', anchor=W, width=75)
 		self.serialout.grid(column=0, row=0)
 
 		self.quitConnection = ttk.Button(self.genstatus, text="Exit", command=self.connection_exit)
@@ -402,7 +439,64 @@ class Window(Frame):
 											command=lambda: self.set_nodesoil(3))
 		self.node3settingsbtn_soil.grid(column=1, row=6)
 
+		# pump button
+		self.pumpsettingsbtn = Button(self.pumpsettings, text="OFF", command=lambda: self.pumptogglewrapper())
+		self.pumpsettingsbtn.grid(column=1, row=0)
+
+		# valve 0 button
+		self.valve0controlbtn = Button(self.valveframe0, text="OFF", command=lambda: self.valvetogglewrapper(0))
+		self.valve0controlbtn.grid(column=2, row=0)
+
+		# valve 1 button
+		self.valve1controlbtn = Button(self.valveframe1, text="OFF", command=lambda: self.valvetogglewrapper(1))
+		self.valve1controlbtn.grid(column=2, row=0)
+
+		# valve 2 button
+		self.valve2controlbtn = Button(self.valveframe2, text="OFF", command=lambda: self.valvetogglewrapper(2))
+		self.valve2controlbtn.grid(column=2, row=0)
+
 		self.init_logger.debug("GUI fleshed out")
+
+	def pumptogglewrapper(self):
+		if irr.toggle_pump():
+			self.pumpsettingsbtn.configure(text="ON")
+			return True
+		else:
+			self.pumpsettingsbtn.configure(text="OFF")
+			return False
+
+	def valvetogglewrapper(self, valve):
+		try:
+			if valve == 0:
+				if irr.toggle_valve(valve):
+					self.valve0controlbtn.configure(text="ON")
+					self.valve0labelstatus.configure(text="Valve 0: ON")
+					return True
+				else:
+					self.valve0controlbtn.configure(text="OFF")
+					self.valve0labelstatus.configure(text="Valve 0: OFF")
+					return False
+			elif valve == 1:
+				if irr.toggle_valve(valve):
+					self.valve1controlbtn.configure(text="ON")
+					self.valve1labelstatus.configure(text="Valve 1: ON")
+					return True
+				else:
+					self.valve1controlbtn.configure(text="OFF")
+					self.valve1labelstatus.configure(text="Valve 1: OFF")
+					return False
+			elif valve == 2:
+				if irr.toggle_valve(valve):
+					self.valve2controlbtn.configure(text="ON")
+					self.valve2labelstatus.configure(text="Valve 2: ON")
+					return True
+				else:
+					self.valve2controlbtn.configure(text="OFF")
+					self.valve2labelstatus.configure(text="Valve 2: OFF")
+					return False
+		except IOError:
+			irr.irrigation_logger.error("Unable to toggle solenoid ", valve)
+			pass
 
 	def read_from_port(self):
 		while True:

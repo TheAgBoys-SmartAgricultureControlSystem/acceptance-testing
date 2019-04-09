@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="10d2187b-1e35-4ad5-b840-9ca9fcaea3b1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/perimeter/irrigation_control.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/perimeter/log_mod.py" beforeDir="false" afterPath="$PROJECT_DIR$/perimeter/log_mod.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" afterDir="false" />
-    </list>
+    <list default="true" id="10d2187b-1e35-4ad5-b840-9ca9fcaea3b1" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,36 +40,36 @@
     <session id="-2123961936">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="8" />
+          <entry key="project.closed" value="11" />
           <entry key="project.open.time.4" value="3" />
-          <entry key="project.open.time.5" value="1" />
-          <entry key="project.open.time.6" value="2" />
+          <entry key="project.open.time.5" value="2" />
+          <entry key="project.open.time.6" value="4" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="8" />
+          <entry key="project.opened" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="8" />
-          <entry key="py" value="6778" />
+          <entry key="py" value="8012" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="8" />
-          <entry key="Python" value="6591" />
+          <entry key="Python" value="7825" />
           <entry key="Scratch" value="187" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="19" />
+          <entry key="py" value="20" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="17" />
+          <entry key="Python" value="18" />
           <entry key="Scratch" value="2" />
         </counts>
       </usages-collector>
@@ -85,8 +80,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/log_mod.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="12" column="6" lean-forward="true" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
+            <state relative-caret-position="325">
+              <caret line="13" column="45" selection-start-line="13" selection-start-column="45" selection-end-line="13" selection-end-column="45" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -97,8 +92,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/uploader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
+            <state relative-caret-position="725">
+              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
               <folding>
                 <element signature="e#0#24#0" expanded="true" />
               </folding>
@@ -109,7 +104,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/entryvalidation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="76">
+            <state relative-caret-position="25">
               <caret line="34" column="56" selection-start-line="34" selection-start-column="56" selection-end-line="34" selection-end-column="56" />
             </state>
           </provider>
@@ -118,30 +113,33 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/geofencing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2050">
+            <state relative-caret-position="621">
               <caret line="83" column="37" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/threaded_serial_gui_concentrator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="346" column="116" selection-start-line="346" selection-start-column="116" selection-end-line="346" selection-end-column="116" />
+            <state relative-caret-position="2746">
+              <caret line="464" column="54" lean-forward="true" selection-start-line="464" selection-start-column="54" selection-end-line="464" selection-end-column="54" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1554763796546" expanded="true" signature="23609:23863" ph="..." />
+                <marker date="1554842448650" expanded="true" signature="27313:27567" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/irrigation_control.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="7" column="19" lean-forward="true" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+            <state relative-caret-position="-204">
+              <caret line="24" column="43" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -166,9 +164,9 @@
       <find>0</find>
     </findStrings>
     <replaceStrings>
+      <replace>3</replace>
       <replace>1</replace>
       <replace>2</replace>
-      <replace>3</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -184,17 +182,17 @@
         <option value="$PROJECT_DIR$/perimeter/geofencing.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_4.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_5.py" />
-        <option value="$PROJECT_DIR$/perimeter/uploader.py" />
         <option value="$PROJECT_DIR$/perimeter/entryvalidation.py" />
+        <option value="$PROJECT_DIR$/perimeter/irrigation_control.py" />
         <option value="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" />
         <option value="$PROJECT_DIR$/perimeter/log_mod.py" />
-        <option value="$PROJECT_DIR$/perimeter/irrigation_control.py" />
+        <option value="$PROJECT_DIR$/perimeter/uploader.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="277" />
-    <option name="y" value="-21" />
+    <option name="x" value="-2459" />
+    <option name="y" value="-20" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
@@ -240,7 +238,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.irrigation_control">
+  <component name="RunManager" selected="Python.threaded_serial_gui_concentrator">
     <configuration name="irrigation_control" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="threaded_serial_gui_concentrator.py" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -355,8 +353,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.irrigation_control" />
         <item itemvalue="Python.threaded_serial_gui_concentrator" />
+        <item itemvalue="Python.irrigation_control" />
         <item itemvalue="Python.uploader" />
         <item itemvalue="Python.scratch_5" />
         <item itemvalue="Python.scratch_4" />
@@ -377,7 +375,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11433087" />
@@ -385,7 +383,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32925472" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3637375" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.20022246" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39822024" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -463,65 +461,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/perimeter/geofencing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2050">
-          <caret line="83" column="37" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Downloads/putty_control/main_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8925">
           <caret line="363" column="61" selection-start-line="363" selection-start-column="61" selection-end-line="363" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/threaded_serial_gui_concentrator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="346" column="116" selection-start-line="346" selection-start-column="116" selection-end-line="346" selection-end-column="116" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1554763796546" expanded="true" signature="23609:23863" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/perimeter/entryvalidation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
+        <state relative-caret-position="25">
           <caret line="34" column="56" selection-start-line="34" selection-start-column="56" selection-end-line="34" selection-end-column="56" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/perimeter/uploader.py">
+    <entry file="file://$PROJECT_DIR$/perimeter/geofencing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="621">
+          <caret line="83" column="37" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/perimeter/log_mod.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="12" column="6" lean-forward="true" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
+        <state relative-caret-position="325">
+          <caret line="13" column="45" selection-start-line="13" selection-start-column="45" selection-end-line="13" selection-end-column="45" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/758031383/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="299" column="4" selection-start-line="299" selection-start-column="4" selection-end-line="299" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/perimeter/uploader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="725">
+          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/perimeter/irrigation_control.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="7" column="19" lean-forward="true" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+        <state relative-caret-position="-204">
+          <caret line="24" column="43" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/threaded_serial_gui_concentrator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2746">
+          <caret line="464" column="54" lean-forward="true" selection-start-line="464" selection-start-column="54" selection-end-line="464" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1554842448650" expanded="true" signature="27313:27567" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

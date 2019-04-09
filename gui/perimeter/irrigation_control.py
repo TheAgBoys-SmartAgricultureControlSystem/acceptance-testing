@@ -1,8 +1,9 @@
-# import log_mod
+import log_mod
 # from pathlib import Path
+import time
 
 # log_folderstream = Path("D:/MyDocuments/Dropbox/University/Fall_18/Capstone/code/acceptance-testing/gui/log/")
-# irrigation_logger = log_mod.setup_logger('irrigation_logger', log_mod.irrigation_log)
+irrigation_logger = log_mod.setup_logger('irrigation_logger', log_mod.irrigation_log)
 
 numValves = 3
 pump_status = False
@@ -16,14 +17,17 @@ def toggle_pump():
 		if not pump_status:
 			pump_status = True
 			# pump_pin = ON
-			# irrigation_logger.info("Pump has been turned ON")
+			print("Pump has been turned ON")
+			irrigation_logger.info("Pump has been turned ON")
 		else:
 			pump_status = False
 			# pump_pin = OFF
-			# irrigation_logger.info("Pump has been turned OFF")
+			print("Pump has been turned OFF")
+			irrigation_logger.info("Pump has been turned OFF")
 	except IOError:
 		pump_status = False
-		# irrigation_logger.critical("Error in switching pump")
+		print("Error in switching pump")
+		irrigation_logger.critical("Error in switching pump")
 
 	return pump_status
 
@@ -40,7 +44,7 @@ def toggle_valve(valvenum):
 	except IOError:
 		valve_status[valvenum] = False
 		print("Error in switching valve ", valvenum)
-		# irrigation_logger.critical("Error in switching valve " + str(valvenum))
+		irrigation_logger.critical("Error in switching valve " + str(valvenum))
 
 	return valve_status[valvenum]
 
@@ -50,13 +54,22 @@ def helper_toggle_valve(status, valvenum):
 	global valve_pins
 	if status:
 		valve_pin = "valve_pins[valvenum] ON"
-		# positive pulse
+		# set polarity relay ON +
+		# pulse from power relay (250ms)
+		# pulse ON
+		time.sleep(0.25)
+		# pulse OFF
 		print("Solenoid " + str(valvenum) + " has been turned ON")
-		# irrigation_logger.info("Solenoid " + str(valvenum) + " has been turned ON")
+		irrigation_logger.info("Solenoid " + str(valvenum) + " has been turned ON")
 	else:
 		valve_pin = "valve_pins[valvenum] OFF"
+		# set polarity relay OFF -
+		# pulse from power relay (250ms)
+		# pulse ON
+		time.sleep(0.25)
+		# pulse OFF
 		print("Solenoid " + str(valvenum) + " has been turned OFF")
-		# irrigation_logger.info("Solenoid " + str(valvenum) + " has been turned OFF")
+		irrigation_logger.info("Solenoid " + str(valvenum) + " has been turned OFF")
 
 
 # print(toggle_pump())

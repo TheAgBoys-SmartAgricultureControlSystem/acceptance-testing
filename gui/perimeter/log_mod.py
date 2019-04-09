@@ -10,8 +10,8 @@ nodeStatus_log = log_folder / 'gui_nodeStatus.log'
 stream_log = log_folder / 'gui_stream.log'
 settings_log = log_folder / 'gui_settings.log'
 gui_log = log_folder / 'gui_gui.log'
-upload_log = log_folder / 'upload_gui.log'
-irrigation_log = log_folder / 'irrigation_gui.log'
+upload_log = log_folder / 'gui_upload.log'
+irrigation_log = log_folder / 'gui_irrigation.log'
 
 formatter = logging.Formatter('%(asctime)s - %(processName)s:%(levelname)s - %(funcName)s: %(message)s')
 

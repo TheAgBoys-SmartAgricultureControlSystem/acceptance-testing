@@ -2,6 +2,8 @@
   <dictionary name="Dhruva">
     <words>
       <w>coords</w>
+      <w>pumptogglewrapper</w>
+      <w>valvetogglewrapper</w>
     </words>
   </dictionary>
 </component>
