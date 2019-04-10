@@ -8,8 +8,8 @@ import serial
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import entryvalidation as entr
-import irrigation_control as irr
 import geofencing
+import irrigation_control as irr
 import log_mod
 import uploader as tx
 
@@ -360,7 +360,6 @@ class Window(Frame):
 		self.valve2labelstatus = ttk.Label(self.pumpsettings, text='Valve 2: N/A')
 		self.valve2labelstatus.grid(column=4, row=0)
 
-
 		# initialize buttons and other gui stuff
 		self.init_window()
 
@@ -587,65 +586,97 @@ class Window(Frame):
 
 		# set node pump_status based on rssi, coords
 		try:
-			# # get fresh coords from stream input
-			# self.latitude_str0 = self.node0settingsinp_lat.get()
-			# self.longitude_str0 = self.node0settingsinp_lng.get()
-			# self.latitude_str1 = self.node1settingsinp_lat.get()
-			# self.longitude_str1 = self.node1settingsinp_lng.get()
-			# self.latitude_str2 = self.node2settingsinp_lat.get()
-			# self.longitude_str2 = self.node2settingsinp_lng.get()
-			# self.latitude_str3 = self.node3settingsinp_lat.get()
-			# self.longitude_str3 = self.node3settingsinp_lng.get()
-			# # get fresh node ids from stream input
-			# self.node0id = self.node0settingsinp_id.get()
-			# self.node1id = self.node1settingsinp_id.get()
-			# self.node2id = self.node2settingsinp_id.get()
-			# self.node3id = self.node3settingsinp_id.get()
 			# get fresh soil
 			self.node0soil = self.node0settingsinp_soil.get()
 			self.node1soil = self.node1settingsinp_soil.get()
 			self.node2soil = self.node2settingsinp_soil.get()
 			self.node3soil = self.node3settingsinp_soil.get()
 
-			# print("Input coords:")
-			# print((float(Nodes.node0.lat), float(Nodes.node0.lng)))
-			# print("Node center coords")
-			# print(Nodes.node0_center.center_coords)
-			# print(Nodes.node0_center.in_geofence((float(Nodes.node0.lat), float(Nodes.node0.lng))))
+			node0_rssi = (int(Nodes.node0.rssi) >= int(self.rssi_min))
+			node0_inside = Nodes.node0_center.in_geofence((float(Nodes.node0.lat), float(Nodes.node0.lng)))
+			node0_soil = ((int(self.node0soil) + 100) >= int(Nodes.node0.soil) >= (int(self.node0soil) - 100))
 
-			if ((int(Nodes.node0.rssi) >= int(self.rssi_min)) and (Nodes.node0_center.in_geofence(
-					(float(Nodes.node0.lat), float(Nodes.node0.lng)))) and (
-					int(Nodes.node0.soil) <= (self.node0soil + 100) and int(Nodes.node0.soil) >= (
-					self.node0soil - 100))):
+			node1_rssi = (int(Nodes.node1.rssi) >= int(self.rssi_min))
+			node1_inside = Nodes.node1_center.in_geofence((float(Nodes.node1.lat), float(Nodes.node1.lng)))
+			node1_soil = ((int(self.node1soil) + 100) >= int(Nodes.node1.soil) >= (int(self.node1soil) - 100))
+
+			node2_rssi = (int(Nodes.node2.rssi) >= int(self.rssi_min))
+			node2_inside = Nodes.node2_center.in_geofence((float(Nodes.node2.lat), float(Nodes.node2.lng)))
+			node2_soil = ((int(self.node2soil) + 100) >= int(Nodes.node2.soil) >= (int(self.node2soil) - 100))
+
+			node3_rssi = (int(Nodes.node3.rssi) >= int(self.rssi_min))
+			node3_inside = Nodes.node3_center.in_geofence((float(Nodes.node3.lat), float(Nodes.node3.lng)))
+			node3_soil = ((int(self.node3soil) + 100) >= int(Nodes.node3.soil) >= (int(self.node3soil) - 100))
+
+			if node0_rssi and node0_inside and node0_soil:
 				self.node0labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
+			elif not node0_rssi:
+				self.node0labelstatusres.configure(text='CONN ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node0_inside:
+				self.node0labelstatusres.configure(text='LOC ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node0_soil:
+				self.node0labelstatusres.configure(text='SOIL ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
 			else:
 				self.node0labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)
-			if ((int(Nodes.node1.rssi) >= int(self.rssi_min)) and (Nodes.node1_center.in_geofence(
-					(float(Nodes.node1.lat), float(Nodes.node1.lng)))) and (
-					int(Nodes.node1.soil) <= (self.node1soil + 100) and int(Nodes.node1.soil) >= (
-					self.node1soil - 100))):
+			if node1_rssi and node1_inside and node1_soil:
 				self.node1labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
+			elif not node1_rssi:
+				self.node1labelstatusres.configure(text='CONN ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node1_inside:
+				self.node1labelstatusres.configure(text='LOC ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node1_soil:
+				self.node1labelstatusres.configure(text='SOIL ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
 			else:
 				self.node1labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)
-			if ((int(Nodes.node2.rssi) >= int(self.rssi_min)) and (Nodes.node2_center.in_geofence(
-					(float(Nodes.node2.lat), float(Nodes.node2.lng)))) and (
-					int(Nodes.node2.soil) <= (self.node2soil + 100) and int(Nodes.node2.soil) >= (
-					self.node2soil - 100))):
+			if node2_rssi and node2_inside and node2_soil:
 				self.node2labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
+			elif not node2_rssi:
+				self.node2labelstatusres.configure(text='CONN ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node2_inside:
+				self.node2labelstatusres.configure(text='LOC ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node2_soil:
+				self.node2labelstatusres.configure(text='SOIL ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
 			else:
 				self.node2labelstatusres.configure(text='WARNING', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)
-			if ((int(Nodes.node3.rssi) >= int(self.rssi_min)) and (Nodes.node3_center.in_geofence(
-					(float(Nodes.node3.lat), float(Nodes.node3.lng)))) and (
-					int(Nodes.node3.soil) <= (self.node3soil + 100) and int(Nodes.node3.soil) >= (
-					self.node3soil - 100))):
+			if node3_rssi and node3_inside and node3_soil:
 				self.node3labelstatusres.configure(text='OK', background='#0f0', foreground='#fff', width=10,
 												   anchor=CENTER)
+			elif not node3_rssi:
+				self.node3labelstatusres.configure(text='CONN ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node3_inside:
+				self.node3labelstatusres.configure(text='LOC ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
+			elif not node3_soil:
+				self.node3labelstatusres.configure(text='SOIL ERROR', background='#f00', foreground='#fff',
+												   anchor=CENTER,
+												   width=10)
 			else:
 				self.node3labelstatusres.configure(text='ERROR', background='#f00', foreground='#fff', anchor=CENTER,
 												   width=10)

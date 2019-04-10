@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="10d2187b-1e35-4ad5-b840-9ca9fcaea3b1" name="Default Changelist" comment="" />
+    <list default="true" id="10d2187b-1e35-4ad5-b840-9ca9fcaea3b1" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,36 +42,36 @@
     <session id="-2123961936">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="11" />
+          <entry key="project.closed" value="12" />
           <entry key="project.open.time.4" value="3" />
           <entry key="project.open.time.5" value="2" />
-          <entry key="project.open.time.6" value="4" />
+          <entry key="project.open.time.6" value="5" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="11" />
+          <entry key="project.opened" value="12" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="8" />
-          <entry key="py" value="8012" />
+          <entry key="py" value="8255" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="8" />
-          <entry key="Python" value="7825" />
+          <entry key="Python" value="8068" />
           <entry key="Scratch" value="187" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="20" />
+          <entry key="py" value="24" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="18" />
+          <entry key="Python" value="22" />
           <entry key="Scratch" value="2" />
         </counts>
       </usages-collector>
@@ -93,7 +95,7 @@
         <entry file="file://$PROJECT_DIR$/perimeter/uploader.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="725">
-              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+              <caret line="29" selection-start-line="29" selection-end-line="29" />
               <folding>
                 <element signature="e#0#24#0" expanded="true" />
               </folding>
@@ -104,8 +106,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/entryvalidation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="34" column="56" selection-start-line="34" selection-start-column="56" selection-end-line="34" selection-end-column="56" />
+            <state>
+              <caret lean-forward="true" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -113,8 +118,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/geofencing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="621">
-              <caret line="83" column="37" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
+            <state relative-caret-position="214">
+              <caret line="76" selection-start-line="76" selection-end-line="76" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -122,11 +130,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/threaded_serial_gui_concentrator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2746">
-              <caret line="464" column="54" lean-forward="true" selection-start-line="464" selection-start-column="54" selection-end-line="464" selection-end-column="54" />
+            <state relative-caret-position="126">
+              <caret line="674" column="36" lean-forward="true" selection-start-line="674" selection-start-column="36" selection-end-line="674" selection-end-column="36" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1554842448650" expanded="true" signature="27313:27567" ph="..." />
               </folding>
             </state>
           </provider>
@@ -135,7 +142,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/perimeter/irrigation_control.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-204">
+            <state relative-caret-position="600">
               <caret line="24" column="43" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
@@ -162,11 +169,15 @@
       <find>1</find>
       <find>2</find>
       <find>0</find>
+      <find>node0</find>
     </findStrings>
     <replaceStrings>
       <replace>3</replace>
       <replace>1</replace>
       <replace>2</replace>
+      <replace>node1</replace>
+      <replace>node2</replace>
+      <replace>node3</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -184,9 +195,9 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_5.py" />
         <option value="$PROJECT_DIR$/perimeter/entryvalidation.py" />
         <option value="$PROJECT_DIR$/perimeter/irrigation_control.py" />
-        <option value="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" />
         <option value="$PROJECT_DIR$/perimeter/log_mod.py" />
         <option value="$PROJECT_DIR$/perimeter/uploader.py" />
+        <option value="$PROJECT_DIR$/threaded_serial_gui_concentrator.py" />
       </list>
     </option>
   </component>
@@ -468,17 +479,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/perimeter/entryvalidation.py">
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/758031383/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="34" column="56" selection-start-line="34" selection-start-column="56" selection-end-line="34" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/perimeter/geofencing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="621">
-          <caret line="83" column="37" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
+        <state relative-caret-position="231">
+          <caret line="299" column="4" selection-start-line="299" selection-start-column="4" selection-end-line="299" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -492,26 +496,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/758031383/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="299" column="4" selection-start-line="299" selection-start-column="4" selection-end-line="299" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/perimeter/uploader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="725">
-          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/perimeter/entryvalidation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/perimeter/irrigation_control.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-204">
+        <state relative-caret-position="600">
           <caret line="24" column="43" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
@@ -519,13 +526,50 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/concurrent/futures/thread.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="55" selection-start-line="55" selection-end-line="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Roaming/Python/Python36/site-packages/apscheduler/executors/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="124" selection-start-line="124" selection-end-line="124" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/osgeo/ogr.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="5750" selection-start-line="5750" selection-end-line="5750" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/perimeter/geofencing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="76" selection-start-line="76" selection-end-line="76" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/tkinter/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="1481" selection-start-line="1481" selection-end-line="1481" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/threaded_serial_gui_concentrator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2746">
-          <caret line="464" column="54" lean-forward="true" selection-start-line="464" selection-start-column="54" selection-end-line="464" selection-end-column="54" />
+        <state relative-caret-position="126">
+          <caret line="674" column="36" lean-forward="true" selection-start-line="674" selection-start-column="36" selection-end-line="674" selection-end-column="36" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1554842448650" expanded="true" signature="27313:27567" ph="..." />
           </folding>
         </state>
       </provider>

@@ -50,3 +50,92 @@
 2019-04-09 14:42:13,942 - MainProcess:INFO - refresh_sensor_status: Node Status Set
 2019-04-09 14:53:30,612 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
 2019-04-09 14:53:30,630 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:17:14,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:17:14,400 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:17:34,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:17:34,278 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:17:54,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:17:54,265 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:14,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:14,264 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:21,403 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:21,404 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:23,873 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:23,875 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:34,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:34,265 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:54,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:54,272 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:56,053 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:56,055 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:18:57,623 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:18:57,624 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:19:07,232 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:07,233 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:19:08,508 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:08,509 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:19:14,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:14,265 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:19:28,088 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:28,089 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:19:34,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:34,264 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:19:41,467 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:41,468 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:19:42,469 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:42,470 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:19:54,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:19:54,271 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:20:14,260 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:20:14,271 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:20:34,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:20:34,268 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:20:54,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:20:54,263 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:21:08,493 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:21:08,495 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:21:14,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:21:14,273 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:21:34,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:21:34,269 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:21:54,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:21:54,266 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:22:14,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:22:14,273 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:22:34,259 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:22:34,273 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:22:54,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:22:54,273 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:23:14,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:23:14,268 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:23:34,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:23:34,268 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:23:54,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:23:54,273 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:24:14,258 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:24:14,270 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:24:40,465 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:24:40,466 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:24:55,421 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:24:55,430 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:25:15,415 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:25:15,421 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:25:29,794 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:25:29,796 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:25:35,412 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:25:35,423 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:26:08,846 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:26:53,300 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:27:28,303 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:29:42,385 - MainProcess:ERROR - refresh_sensor_status: Type Error in setting Node pump_status
+2019-04-10 11:33:53,709 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:35:54,201 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:36:40,840 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:47:32,868 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:47:32,869 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:47:38,324 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:47:38,325 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:47:41,743 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:47:41,744 - MainProcess:INFO - refresh_sensor_status: Node Status Set
+2019-04-10 11:47:47,060 - MainProcess:INFO - refresh_sensor_status: Sensor Status Refreshed
+2019-04-10 11:47:47,077 - MainProcess:INFO - refresh_sensor_status: Node Status Set
