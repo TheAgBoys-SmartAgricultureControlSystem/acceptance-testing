@@ -1,5 +1,0 @@
-2019-04-04 16:40:30,901 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 2
-2019-04-04 16:40:30,901 - MainProcess:INFO - set_nodeids: Node ID for Node 2 set to 99
-2019-04-04 16:40:31,805 - MainProcess:INFO - set_coords: Setting Coords for Node 3
-2019-04-04 16:40:31,805 - MainProcess:INFO - set_coords: Coords for Node 3 set to 000.000000,000.000000
-2019-04-04 16:40:31,805 - MainProcess:INFO - set_coords: POINT (0 0 0)
