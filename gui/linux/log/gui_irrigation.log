@@ -1,0 +1,96 @@
+2019-04-11 15:40:43,551 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 15:40:44,446 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 15:48:37,977 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 15:48:39,225 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 15:54:02,727 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 15:54:18,613 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 16:05:57,456 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 16:05:59,200 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 16:06:01,722 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 16:06:03,722 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 16:06:05,258 - MainProcess:INFO - helper_toggle_valve: Solenoid 1 has been turned ON
+2019-04-11 16:06:07,034 - MainProcess:INFO - helper_toggle_valve: Solenoid 1 has been turned OFF
+2019-04-11 16:06:08,602 - MainProcess:INFO - helper_toggle_valve: Solenoid 2 has been turned ON
+2019-04-11 16:06:10,170 - MainProcess:INFO - helper_toggle_valve: Solenoid 2 has been turned OFF
+2019-04-11 16:15:24,635 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 16:15:25,611 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 16:15:27,382 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 16:15:28,166 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 16:40:46,773 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 16:41:03,825 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:10:34,508 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:10:36,056 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:10:40,307 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:10:41,752 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:15:10,718 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:15:11,748 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:23:42,801 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:23:44,229 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:23:45,492 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:23:46,690 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:23:48,192 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:23:48,944 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:23:53,302 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:23:54,623 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:24:10,357 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:24:13,688 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:24:14,945 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:24:17,759 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:25:32,504 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:25:33,892 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:25:35,024 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:25:36,127 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:25:57,802 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:26:03,396 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:28:01,037 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:28:01,836 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:28:04,867 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:28:05,818 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:28:08,412 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:28:10,037 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:43:14,571 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:48:12,216 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:48:17,616 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:48:19,381 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:48:20,916 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:48:39,706 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:48:43,341 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:48:44,331 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:48:45,990 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:48:50,087 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:48:53,284 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:48:56,455 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:48:58,812 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:49:01,020 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:49:04,417 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:49:09,090 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:49:18,864 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:49:26,371 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:49:30,065 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:49:34,626 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:57:10,273 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:57:17,160 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:57:44,516 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:58:11,804 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:58:21,521 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:58:25,529 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:58:41,499 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:58:49,728 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:58:52,479 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:58:58,405 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:59:05,689 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:59:26,491 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:59:32,380 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 17:59:34,225 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:59:35,913 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 17:59:40,750 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 17:59:45,122 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 17:59:52,901 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 18:00:44,639 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 18:00:49,061 - MainProcess:INFO - toggle_pump: Pump has been turned ON
+2019-04-11 18:00:55,233 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 18:01:00,769 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 18:01:06,257 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON
+2019-04-11 18:01:14,426 - MainProcess:INFO - toggle_pump: Pump has been turned OFF
+2019-04-11 18:02:38,615 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned OFF
+2019-04-11 18:02:39,620 - MainProcess:INFO - helper_toggle_valve: Solenoid 0 has been turned ON

@@ -1,0 +1,66 @@
+2019-04-10 19:08:59,159 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-10 19:08:59,162 - MainProcess:INFO - __init__: Connection to COM7 at 9600 baud Successful
+2019-04-10 19:08:59,328 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-10 19:08:59,357 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-10 19:08:59,383 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-10 19:08:59,434 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 15:37:26,005 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 15:37:26,007 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 15:37:26,172 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 15:37:26,262 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 15:37:26,319 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 15:37:26,687 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 15:48:13,398 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 15:48:13,401 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 15:48:13,464 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 15:48:13,547 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 15:48:13,600 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 15:48:13,948 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 15:50:17,609 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 15:50:17,615 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 15:50:17,682 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 15:50:17,767 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 15:50:17,823 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 15:50:18,228 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 15:51:57,865 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 15:51:57,867 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 9600 baud Successful
+2019-04-11 15:51:57,937 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 15:51:58,021 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 15:51:58,075 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 15:51:58,442 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 16:05:52,825 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 16:05:52,828 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 16:05:52,888 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 16:05:52,970 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 16:05:53,024 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 16:05:53,372 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 16:36:13,661 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 16:36:13,674 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 16:36:13,822 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 16:36:13,934 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 16:36:14,003 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 16:36:14,374 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 17:05:53,892 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 17:05:53,901 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 17:05:54,027 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 17:05:54,113 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 17:05:54,173 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 17:05:54,601 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 17:14:08,943 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 17:14:08,945 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 17:14:09,015 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 17:14:09,103 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 17:14:09,160 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 17:14:09,533 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 17:43:07,115 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 17:43:07,120 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 17:43:07,251 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 17:43:07,348 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 17:43:07,409 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 17:43:07,826 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added
+2019-04-11 17:47:59,957 - MainProcess:DEBUG - __init__: Window instance created
+2019-04-11 17:47:59,963 - MainProcess:INFO - __init__: Connection to /dev/ttyACM0 at 115200 baud Successful
+2019-04-11 17:48:00,091 - MainProcess:INFO - __init__: Background Scheduler Started
+2019-04-11 17:48:00,178 - MainProcess:DEBUG - __init__: Finished building gui skeleton
+2019-04-11 17:48:00,232 - MainProcess:DEBUG - init_window: GUI fleshed out
+2019-04-11 17:48:00,602 - MainProcess:DEBUG - __init__: Thread daemonized and Jobs added

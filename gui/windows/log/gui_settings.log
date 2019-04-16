@@ -1,0 +1,28 @@
+2019-04-14 14:55:47,268 - MainProcess:INFO - set_nodesoil: Setting Soil Moisture Level for Node 0
+2019-04-14 14:55:47,268 - MainProcess:INFO - set_nodesoil: Node Soil Moisture Level for Node 0 set to 300
+2019-04-14 14:55:48,160 - MainProcess:INFO - set_coords: Setting Coords for Node 0
+2019-04-14 14:55:48,160 - MainProcess:INFO - set_coords: Coords for Node 0 set to 40.011234,-105.261234
+2019-04-14 14:55:48,160 - MainProcess:INFO - set_coords: POINT (40.011234 -105.261234 0)
+2019-04-14 14:55:48,970 - MainProcess:INFO - set_nodesoil: Setting Soil Moisture Level for Node 2
+2019-04-14 14:55:48,973 - MainProcess:INFO - set_nodesoil: Node Soil Moisture Level for Node 2 set to 300
+2019-04-14 14:55:49,651 - MainProcess:INFO - set_coords: Setting Coords for Node 2
+2019-04-14 14:55:49,652 - MainProcess:INFO - set_coords: Coords for Node 2 set to 40.011234,-105.261234
+2019-04-14 14:55:49,652 - MainProcess:INFO - set_coords: POINT (40.011234 -105.261234 0)
+2019-04-14 14:55:50,321 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 2
+2019-04-14 14:55:50,321 - MainProcess:INFO - set_nodeids: Node ID for Node 2 set to 12
+2019-04-14 14:55:51,253 - MainProcess:INFO - set_nodesoil: Setting Soil Moisture Level for Node 1
+2019-04-14 14:55:51,254 - MainProcess:INFO - set_nodesoil: Node Soil Moisture Level for Node 1 set to 300
+2019-04-14 14:55:52,024 - MainProcess:INFO - set_coords: Setting Coords for Node 1
+2019-04-14 14:55:52,025 - MainProcess:INFO - set_coords: Coords for Node 1 set to 40.011234,-105.261234
+2019-04-14 14:55:52,025 - MainProcess:INFO - set_coords: POINT (40.011234 -105.261234 0)
+2019-04-14 14:55:52,772 - MainProcess:INFO - set_nodesoil: Setting Soil Moisture Level for Node 3
+2019-04-14 14:55:52,773 - MainProcess:INFO - set_nodesoil: Node Soil Moisture Level for Node 3 set to 300
+2019-04-14 14:55:53,563 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 1
+2019-04-14 14:55:53,564 - MainProcess:INFO - set_nodeids: Node ID for Node 1 set to 11
+2019-04-14 14:55:54,358 - MainProcess:INFO - set_coords: Setting Coords for Node 3
+2019-04-14 14:55:54,359 - MainProcess:INFO - set_coords: Coords for Node 3 set to 40.011234,-105.261234
+2019-04-14 14:55:54,359 - MainProcess:INFO - set_coords: POINT (40.011234 -105.261234 0)
+2019-04-14 14:55:55,051 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 3
+2019-04-14 14:55:55,051 - MainProcess:INFO - set_nodeids: Node ID for Node 3 set to 13
+2019-04-14 14:57:16,684 - MainProcess:INFO - set_nodesoil: Setting Soil Moisture Level for Node 0
+2019-04-14 14:57:16,684 - MainProcess:INFO - set_nodesoil: Node Soil Moisture Level for Node 0 set to 900

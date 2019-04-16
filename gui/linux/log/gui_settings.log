@@ -1,0 +1,6 @@
+2019-04-11 15:50:45,785 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 0
+2019-04-11 15:50:45,786 - MainProcess:INFO - set_nodeids: Node ID for Node 0 set to 10
+2019-04-11 17:06:47,634 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 0
+2019-04-11 17:06:47,640 - MainProcess:INFO - set_nodeids: Node ID for Node 0 set to 10
+2019-04-11 17:07:05,585 - MainProcess:INFO - set_nodeids: Setting Node IDs for Node 2
+2019-04-11 17:07:05,586 - MainProcess:INFO - set_nodeids: Node ID for Node 2 set to 12
