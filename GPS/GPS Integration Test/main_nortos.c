@@ -47,8 +47,7 @@ extern void *mainThread(void *arg0);
 /*
  *  ======== main ========
  */
-int main(void)
-{
+int main(void){
     /* Call driver init functions */
     Board_init();
 

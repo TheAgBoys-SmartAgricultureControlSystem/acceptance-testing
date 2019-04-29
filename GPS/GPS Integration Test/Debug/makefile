@@ -129,34 +129,34 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-uartecho_CC1352R1_LAUNCHXL_nortos_ccs.out \
+GPS\ Integration\ Test.out \
 
 EXE_OUTPUTS__QUOTED += \
-"uartecho_CC1352R1_LAUNCHXL_nortos_ccs.out" \
+"GPS Integration Test.out" \
 
 BIN_OUTPUTS += \
-uartecho_CC1352R1_LAUNCHXL_nortos_ccs.hex \
+GPS\ Integration\ Test.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"uartecho_CC1352R1_LAUNCHXL_nortos_ccs.hex" \
+"GPS Integration Test.hex" \
 
 
 # All Target
 all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "uartecho_CC1352R1_LAUNCHXL_nortos_ccs.out"
+	@$(MAKE) --no-print-directory -Onone "GPS Integration Test.out"
 
 # Tool invocations
-uartecho_CC1352R1_LAUNCHXL_nortos_ccs.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+GPS\ Integration\ Test.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=DeviceFamily_CC13X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"uartecho_CC1352R1_LAUNCHXL_nortos_ccs.map" -i"/Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/source" -i"/Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/kernel/nortos" -i"/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="uartecho_CC1352R1_LAUNCHXL_nortos_ccs_linkInfo.xml" --rom_model -o "uartecho_CC1352R1_LAUNCHXL_nortos_ccs.out" $(ORDERED_OBJS)
+	"/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=DeviceFamily_CC13X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"GPS Integration Test.map" -i"/Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/source" -i"/Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/kernel/nortos" -i"/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="GPS Integration Test_linkInfo.xml" --rom_model -o "GPS Integration Test.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
-uartecho_CC1352R1_LAUNCHXL_nortos_ccs.hex: $(EXE_OUTPUTS)
+GPS\ Integration\ Test.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex"  -o "uartecho_CC1352R1_LAUNCHXL_nortos_ccs.hex" $(EXE_OUTPUTS__QUOTED)
+	"/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex"  -o "GPS Integration Test.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 

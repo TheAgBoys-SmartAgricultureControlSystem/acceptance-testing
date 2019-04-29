@@ -32,33 +32,25 @@
 
 /***** Includes *****/
 #include "EasyLink.h"
-#include "easylink_config.h"
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <limits.h>
-
-#ifndef USE_DMM
-#include <ti/drivers/rf/RF.h>
-#else
-#include <dmm/dmm_rfmap.h>
-#endif //USE_DMM
-
-#include "Board.h"
 
 /* TI Drivers */
-#ifdef Board_SYSCONFIG_PREVIEW
-#include <smartrf_settings/smartrf_settings.h>
-#else
-#include <smartrf_settings/smartrf_settings.h>
 #include <smartrf_settings/smartrf_settings_predefined.h>
-#endif
+#include <smartrf_settings/smartrf_settings.h>
 
 /* BIOS Header files */
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
+
+#ifndef USE_DMM
+#include <ti/drivers/rf/RF.h>
+#include "Board.h"
+#else
+#include <dmm/dmm_rfmap.h>
+#include "board.h"
+#endif //USE_DMM
+
 
 /* XDCtools Header files */
 #include <xdc/runtime/Error.h>
@@ -96,43 +88,6 @@ union setupCmd_t{
 
 #define EasyLink_CmdHandle_isValid(handle) (handle >= 0)
 
-/* EasyLink Proprietary Header Configuration */
-#define EASYLINK_PROP_TRX_SYNC_WORD     0x930B51DE
-#define EASYLINK_PROP_HDR_NBITS         8U
-#define EASYLINK_PROP_LEN_OFFSET        0U
-
-/* IEEE 802.15.4g Header Configuration
- * _S indicates the shift for a given bit field
- * _M indicates the mask required to isolate a given bit field
- */
-#define EASYLINK_IEEE_TRX_SYNC_WORD     0x0055904E
-#define EASYLINK_IEEE_HDR_NBITS         16U
-#define EASYLINK_IEEE_LEN_OFFSET        0xFC
-
-#define EASYLINK_IEEE_HDR_LEN_S         0U
-#define EASYLINK_IEEE_HDR_LEN_M         0x00FFU
-#define EASYLINK_IEEE_HDR_CRC_S         12U
-#define EASYLINK_IEEE_HDR_CRC_M         0x1000U
-#define EASYLINK_IEEE_HDR_WHTNG_S       11U
-#define EASYLINK_IEEE_HDR_WHTNG_M       0x0800U
-#define EASYLINK_IEEE_HDR_CRC_2BYTE     1U
-#define EASYLINK_IEEE_HDR_CRC_4BYTE     0U
-#define EASYLINK_IEEE_HDR_WHTNG_EN      1U
-#define EASYLINK_IEEE_HDR_WHTNG_DIS     0U
-
-#define EASYLINK_IEEE_HDR_CREATE(crc, whitening, length) {                         \
-    ((crc << EASYLINK_IEEE_HDR_CRC_S) | (whitening << EASYLINK_IEEE_HDR_WHTNG_S) | \
-    ((length << EASYLINK_IEEE_HDR_LEN_S) & EASYLINK_IEEE_HDR_LEN_M))               \
-}
-
-/* Common Configuration (Prop and IEEE) */
-#define EASYLINK_HDR_LEN_NBITS          8U
-
-/* Return the size of the header rounded up to
- * the nearest integer number of bytes
- */
-#define EASYLINK_HDR_SIZE_NBYTES(x) (((x) >> 3U) + (((x) & 0x03) ? 1U : 0U))
-
 /***** Prototypes *****/
 static EasyLink_TxDoneCb txCb;
 static EasyLink_ReceiveCb rxCb;
@@ -149,38 +104,38 @@ static RF_Handle rfHandle;
 //which must be aligned to 4B
 #if defined(__TI_COMPILER_VERSION__)
 #pragma DATA_ALIGN (rxBuffer, 4);
-#elif defined(__IAR_SYSTEMS_ICC__)
-#pragma data_alignment = 4
-#elif defined(__GNUC__)
-__attribute__((aligned(4)))
-#else
-#error This compiler is not supported.
-#endif
 static uint8_t rxBuffer[sizeof(rfc_dataEntryGeneral_t) + 1 +
                         EASYLINK_MAX_ADDR_SIZE +
                         EASYLINK_MAX_DATA_LENGTH];
+#elif defined(__IAR_SYSTEMS_ICC__)
+#pragma data_alignment = 4
+static uint8_t rxBuffer[sizeof(rfc_dataEntryGeneral_t) + 1 +
+                        EASYLINK_MAX_ADDR_SIZE +
+                        EASYLINK_MAX_DATA_LENGTH];
+#elif defined(__GNUC__)
+static uint8_t rxBuffer[sizeof(rfc_dataEntryGeneral_t) + 1 +
+                        EASYLINK_MAX_ADDR_SIZE +
+                        EASYLINK_MAX_DATA_LENGTH]
+                        __attribute__((aligned(4)));
+#else
+    #error This compiler is not supported.
+#endif
 
 static dataQueue_t dataQueue;
 static rfc_propRxOutput_t rxStatistics;
 
-//Tx buffer includes hdr (len=1 or 2 bytes), dst addr (max of 8 bytes) and data
-static uint8_t txBuffer[2U + EASYLINK_MAX_ADDR_SIZE + EASYLINK_MAX_DATA_LENGTH];
+//Tx buffer includes hdr (len=1byte), dst addr (max of 8 bytes) and data
+static uint8_t txBuffer[1 + EASYLINK_MAX_ADDR_SIZE + EASYLINK_MAX_DATA_LENGTH];
 
-// Addr size for Filter and Tx/Rx operations
-// Set default to 1 byte addr to work with SmartRF studio default settings
-// NOTE that it can take on values 0, 1, 2, 4 or 8
-static uint8_t addrSize = EASYLINK_ADDR_SIZE;
-
-// Header Size (in bytes) for Advanced Tx operations. For IEEE 802.15.4g modes
-// it is 2 bytes, 1 for the rest
-static uint8_t hdrSize = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_PROP_HDR_NBITS);
+//Addr size for Filter and Tx/Rx operations
+//Set default to 1 byte addr to work with SmartRF
+//studio default settings
+static uint8_t addrSize = 1;
 
 //Indicating that the API is initialized
 static uint8_t configured = 0;
 //Indicating that the API suspended
 static uint8_t suspended = 0;
-//Use an IEEE header for the Tx/Rx command
-static bool useIeeeHeader = 0;
 
 //RF Params allowing configuration of the inactivity timeout, which is the time
 //it takes for the radio to shut down when there are no commands in the queue
@@ -188,36 +143,26 @@ static RF_Params rfParams;
 static bool rfParamsConfigured = 0;
 
 //Flag used to indicate the multi client operation is enabled
-static bool rfModeMultiClient = EASYLINK_ENABLE_MULTI_CLIENT;
+static bool rfModeMultiClient = false;
 
 //Async Rx timeout value
-static uint32_t asyncRxTimeOut = EASYLINK_ASYNC_RX_TIMEOUT;
+static uint32_t asyncRxTimeOut = 0;
 
 //local commands, contents will be defined by modulation type
 static union setupCmd_t EasyLink_cmdPropRadioSetup;
 static rfc_CMD_FS_t EasyLink_cmdFs;
 static RF_Mode EasyLink_RF_prop;
-static rfc_CMD_PROP_TX_ADV_t EasyLink_cmdPropTxAdv;
+static rfc_CMD_PROP_TX_t EasyLink_cmdPropTx;
 static rfc_CMD_PROP_RX_ADV_t EasyLink_cmdPropRxAdv;
 #if (defined(DeviceFamily_CC13X0) || defined(DeviceFamily_CC13X2))
 static rfc_CMD_PROP_CS_t EasyLink_cmdPropCs;
 #endif // (defined(DeviceFamily_CC13X0) || defined(DeviceFamily_CC13X2))
 
 // The table for setting the Rx Address Filters
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_ALIGN (addrFilterTable, 4);
-#elif defined(__IAR_SYSTEMS_ICC__)
-#pragma data_alignment = 4
-#elif defined(__GNUC__)
-__attribute__((aligned(4)))
-#endif
-static uint8_t addrFilterTable[EASYLINK_MAX_ADDR_FILTERS * EASYLINK_MAX_ADDR_SIZE] = EASYLINK_ADDR_FILTER_TABLE;
-
-// Used as a pointer to an entry in the EasyLink_rfSettings array
-static EasyLink_RfSetting *rfSetting = 0;
+static uint8_t addrFilterTable[EASYLINK_MAX_ADDR_FILTERS * EASYLINK_MAX_ADDR_SIZE] = {0xaa};
 
 // Default inactivity timeout of 1 ms
-static uint32_t inactivityTimeout = EASYLINK_IDLE_TIMEOUT;
+static uint32_t inactivityTimeout = EasyLink_ms_To_RadioTime(1);
 
 //Mutex for locking the RF driver resource
 static Semaphore_Handle busyMutex;
@@ -226,35 +171,19 @@ static Semaphore_Handle busyMutex;
 static RF_CmdHandle asyncCmdHndl = EASYLINK_RF_CMD_HANDLE_INVALID;
 
 /* Set Default parameters structure */
-static const EasyLink_Params EasyLink_defaultParams = EASYLINK_PARAM_CONFIG;
+static const EasyLink_Params EasyLink_defaultParams = {
+    .ui32ModType            = EasyLink_Phy_Custom,
+    .pClientEventCb         = NULL,
+    .nClientEventMask       = 0,
+    .pGrnFxn                = (EasyLink_GetRandomNumber)rand
+};
 
 static EasyLink_Params EasyLink_params;
 
-/* Check the address size (in bytes) is either 0 or a power of 2, and less than
- * the maximum allowed size
- */
-static bool isAddrSizeValid(uint8_t ui8AddrSize)
-{
-    return((ui8AddrSize == 0) || (!(ui8AddrSize & (ui8AddrSize - 1)) && \
-           (ui8AddrSize <= EASYLINK_MAX_ADDR_SIZE)));
-}
 
 void EasyLink_Params_init(EasyLink_Params *params)
 {
     *params = EasyLink_defaultParams;
-}
-
-//Create an Advanced Tx command from a Tx Command
-void createTxAdvFromTx(rfc_CMD_PROP_TX_ADV_t *dst, rfc_CMD_PROP_TX_t *src)
-{
-    memset(dst, 0 , sizeof(rfc_CMD_PROP_TX_ADV_t));
-    dst->commandNo = CMD_PROP_TX_ADV;
-    memcpy(&(dst->status), &(src->status), offsetof(rfc_CMD_PROP_TX_ADV_t, pktConf) -
-           offsetof(rfc_CMD_PROP_TX_ADV_t, status));
-    dst->pktConf.bFsOff = src->pktConf.bFsOff;
-    dst->pktConf.bUseCrc = src->pktConf.bUseCrc;
-    dst->pktLen = src->pktLen;
-    dst->syncWord = src->syncWord;
 }
 
 //Callback for Async Tx complete
@@ -425,18 +354,10 @@ static void rxDoneCallback(RF_Handle h, RF_CmdHandle ch, RF_EventMask e)
             {
                 //copy length from pDataEntry
                 rxPacket.len = *(uint8_t*)(&pDataEntry->data) - addrSize;
-                if(useIeeeHeader)
-                {
-                    hdrSize = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_IEEE_HDR_NBITS);
-                }
-                else
-                {
-                    hdrSize = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_PROP_HDR_NBITS);
-                }
                 //copy address from packet payload (as it is not in hdr)
-                memcpy(&rxPacket.dstAddr, (&pDataEntry->data + hdrSize), addrSize);
+                memcpy(&rxPacket.dstAddr, (&pDataEntry->data + 1), addrSize);
                 //copy payload
-                memcpy(&rxPacket.payload, (&pDataEntry->data + hdrSize + addrSize), rxPacket.len);
+                memcpy(&rxPacket.payload, (&pDataEntry->data + 1 + addrSize), rxPacket.len);
                 rxPacket.rssi = rxStatistics.lastRssi;
                 rxPacket.absTime = rxStatistics.timeStamp;
 
@@ -469,6 +390,7 @@ static void rxDoneCallback(RF_Handle h, RF_CmdHandle ch, RF_EventMask e)
         //Release now so user callback can call EasyLink API's
         Semaphore_post(busyMutex);
         asyncCmdHndl = EASYLINK_RF_CMD_HANDLE_INVALID;
+
         status = EasyLink_Status_Aborted;
     }
 
@@ -503,12 +425,10 @@ static EasyLink_Status enableTestMode(EasyLink_CtrlOption mode)
     {
         return EasyLink_Status_Param_Error;
     }
-    if (EasyLink_CmdHandle_isValid(asyncCmdHndl))
-    {
-        return EasyLink_Status_Busy_Error;
-    }
+
     //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
+    if((Semaphore_pend(busyMutex, 0) == FALSE) ||
+            (EasyLink_CmdHandle_isValid(asyncCmdHndl)))
     {
         return EasyLink_Status_Busy_Error;
     }
@@ -521,7 +441,7 @@ static EasyLink_Status enableTestMode(EasyLink_CtrlOption mode)
         txTestCmd.startTime = 0;
 
         txTestCmd.config.bFsOff = 1;
-        txTestCmd.syncWord = EasyLink_cmdPropTxAdv.syncWord;
+        txTestCmd.syncWord = EasyLink_cmdPropTx.syncWord;
 
         /* WhitenMode
          * 0: No whitening
@@ -609,16 +529,16 @@ EasyLink_Status EasyLink_init(EasyLink_Params *params)
 {
     if (params == NULL)
     {
-        EasyLink_Params_init(&EasyLink_params);
+		EasyLink_Params_init(&EasyLink_params);
     } else
     {
-        memcpy(&EasyLink_params, params, sizeof(EasyLink_params));
+		memcpy(&EasyLink_params, params, sizeof(EasyLink_params));
     }
 
     if (configured)
     {
         //Already configure, check and take the busyMutex
-        if (Semaphore_pend(busyMutex, 0) == false)
+        if (Semaphore_pend(busyMutex, 0) == FALSE)
         {
             return EasyLink_Status_Busy_Error;
         }
@@ -664,161 +584,117 @@ EasyLink_Status EasyLink_init(EasyLink_Params *params)
     EasyLink_cmdPropCs.csConf.busyOp            = 0x1; // End carrier sense on channel Busy
     EasyLink_cmdPropCs.csConf.idleOp            = 0x0; // Continue carrier sense on channel Idle
     EasyLink_cmdPropCs.csEndTrigger.triggerType = TRIG_REL_START; // Ends at a time relative to the command started
-    EasyLink_cmdPropCs.csEndTime                = EasyLink_us_To_RadioTime(EASYLINK_CHANNEL_IDLE_TIME_US);
+	EasyLink_cmdPropCs.csEndTime                = EasyLink_us_To_RadioTime(EASYLINK_CHANNEL_IDLE_TIME_US);
 #endif //(defined(DeviceFamily_CC13X0) || defined(DeviceFamily_CC13X2))
 
 #if (defined(FEATURE_OAD_ONCHIP))
-    EasyLink_params.ui32ModType = EasyLink_Phy_Custom;
+	EasyLink_params.ui32ModType = EasyLink_Phy_Custom;
 #endif
 
-    bool useDivRadioSetup = true;
-    bool rfConfigOk = false;
-    bool createCmdTxAdvFromTx = true;
-    useIeeeHeader = false;
-
-    // Check if the PHY setting is compatible with the current device
-    switch(EasyLink_params.ui32ModType)
+    if (EasyLink_params.ui32ModType == EasyLink_Phy_Custom)
     {
-        case EasyLink_Phy_Custom:
-            if((ChipInfo_ChipFamilyIs_CC26x0()) || (ChipInfo_ChipFamilyIs_CC26x0R2()))
-            {
-                useDivRadioSetup= false;
-            }
-            rfConfigOk = true;
-        break;
-
-        case EasyLink_Phy_50kbps2gfsk:
-            if(!(ChipInfo_ChipFamilyIs_CC26x0()) && !(ChipInfo_ChipFamilyIs_CC26x0R2()))
-            {
-                useDivRadioSetup= true;
-                rfConfigOk = true;
-            }
-        break;
-
-        case EasyLink_Phy_625bpsLrm:
-            if(!(ChipInfo_ChipFamilyIs_CC26x0()) && !(ChipInfo_ChipFamilyIs_CC26x0R2())
-                && !(ChipInfo_ChipFamilyIs_CC13x2_CC26x2()))
-            {
-                useDivRadioSetup= true;
-                rfConfigOk = true;
-            }
-        break;
-
-        case EasyLink_Phy_2_4_100kbps2gfsk:
-            if((ChipInfo_GetChipType() == CHIP_TYPE_CC2640R2))
-            {
-                useDivRadioSetup= false;
-                rfConfigOk = true;
-            }
-        break;
-
-        case EasyLink_Phy_2_4_200kbps2gfsk:
-            if((ChipInfo_GetChipType() == CHIP_TYPE_CC2650))
-            {
-                useDivRadioSetup= false;
-                rfConfigOk = true;
-            }
-        break;
-
-        case EasyLink_Phy_2_4_250kbps2gfsk:
-            if((ChipInfo_GetChipType() == CHIP_TYPE_CC2640R2))
-            {
-                useDivRadioSetup= false;
-                rfConfigOk = true;
-            }
-        break;
-
-        case EasyLink_Phy_5kbpsSlLr:
-            if(!(ChipInfo_ChipFamilyIs_CC26x0()) && !(ChipInfo_ChipFamilyIs_CC26x0R2()))
-            {
-                useDivRadioSetup= true;
-                rfConfigOk = true;
-#if (defined Board_CC1352P_4_LAUNCHXL)
-                // CC1352P-4 SLR operates at 433.92 MHz
-                EasyLink_cmdFs.frequency = 0x01B1;
-                EasyLink_cmdFs.fractFreq = 0xEB9A;
+        if((ChipInfo_ChipFamilyIs_CC26x0()) || (ChipInfo_ChipFamilyIs_CC26x0R2()))
+        {
+            memcpy(&EasyLink_cmdPropRadioSetup.setup, &RF_cmdPropRadioDivSetup, sizeof(rfc_CMD_PROP_RADIO_SETUP_t));
+        }
+        else
+        {
+#if (defined Board_CC1352P1_LAUNCHXL)  || (defined Board_CC1352P_2_LAUNCHXL)  || \
+    (defined Board_CC1352P_4_LAUNCHXL)
+            memcpy(&EasyLink_cmdPropRadioSetup.divSetup, &RF_cmdPropRadioDivSetup, sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_PA_t));
+#else
+            memcpy(&EasyLink_cmdPropRadioSetup.divSetup, &RF_cmdPropRadioDivSetup, sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_t));
 #endif
-            }
-        break;
-
-        case EasyLink_Phy_200kbps2gfsk:
-            if((ChipInfo_GetChipType() == CHIP_TYPE_CC1312) || (ChipInfo_GetChipType() == CHIP_TYPE_CC1352) ||
-               (ChipInfo_GetChipType() == CHIP_TYPE_CC1352P))
-            {
-#if !defined(Board_CC1352P_4_LAUNCHXL)
-                // This mode is not supported in the 433 MHz band
-                useDivRadioSetup= true;
-                rfConfigOk = true;
-                createCmdTxAdvFromTx = false;
-                useIeeeHeader = true;
-#endif
-            }
-            break;
-
-
-        default:  // Invalid PHY setting
-            rfConfigOk = false;
-        break;
-    }
-
-    // Return an error if the PHY setting is incompatible with the current device
-    if(!rfConfigOk)
-    {
-        if (busyMutex != NULL)
-        {
-            Semaphore_post(busyMutex);
         }
-        return EasyLink_Status_Param_Error;
+        memcpy(&EasyLink_cmdFs, &RF_cmdFs, sizeof(rfc_CMD_FS_t));
+        memcpy(&EasyLink_RF_prop, &RF_prop, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, &RF_cmdPropTx, sizeof(rfc_CMD_PROP_TX_t));
     }
-
-    // Loop through the EasyLink_supportedPhys array looking for the PHY
-    uint8_t i = 0;
-    while(i < EasyLink_numSupportedPhys)
-    {
-        if(EasyLink_supportedPhys[i].EasyLink_phyType == EasyLink_params.ui32ModType)
-        {
-            rfSetting = &EasyLink_supportedPhys[i];
-            break;
-        }
-        i++;
-    }
-
-    // Return an error if the PHY isn't in the supported settings list
-    if(rfSetting == 0)
-    {
-        if (busyMutex != NULL)
-        {
-            Semaphore_post(busyMutex);
-        }
-        return EasyLink_Status_Param_Error;
-    }
-
-    // Copy the PHY settings to the EasyLink PHY variable
-    if(useDivRadioSetup)
+    else if ((EasyLink_params.ui32ModType == EasyLink_Phy_50kbps2gfsk) && !(ChipInfo_ChipFamilyIs_CC26x0()) &&
+             !(ChipInfo_ChipFamilyIs_CC26x0R2()))
     {
 #if (defined Board_CC1352P1_LAUNCHXL)  || (defined Board_CC1352P_2_LAUNCHXL)  || \
     (defined Board_CC1352P_4_LAUNCHXL)
-        memcpy(&EasyLink_cmdPropRadioSetup.divSetup, (rfSetting->RF_uCmdPropRadio.RF_pCmdPropRadioDivSetup), sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_PA_t));
+        memcpy(&EasyLink_cmdPropRadioSetup.divSetup, RF_pCmdPropRadioDivSetup_fsk, sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_PA_t));
 #else
-        memcpy(&EasyLink_cmdPropRadioSetup.divSetup, (rfSetting->RF_uCmdPropRadio.RF_pCmdPropRadioDivSetup), sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_t));
+        memcpy(&EasyLink_cmdPropRadioSetup.divSetup, RF_pCmdPropRadioDivSetup_fsk, sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_t));
 #endif
+        memcpy(&EasyLink_cmdFs, RF_pCmdFs_preDef, sizeof(rfc_CMD_FS_t));
+        memcpy(&EasyLink_RF_prop, RF_pProp_fsk, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, RF_pCmdPropTx_preDef, sizeof(rfc_CMD_PROP_TX_t));
+    }
+    else if ((EasyLink_params.ui32ModType == EasyLink_Phy_625bpsLrm) && !(ChipInfo_ChipFamilyIs_CC26x0()) &&
+             !(ChipInfo_ChipFamilyIs_CC26x0R2()) && !(ChipInfo_ChipFamilyIs_CC13x2_CC26x2()))
+    {
+        memcpy(&EasyLink_cmdPropRadioSetup.divSetup,
+                RF_pCmdPropRadioDivSetup_lrm,
+                sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_t));
+        memcpy(&EasyLink_cmdFs, RF_pCmdFs_preDef, sizeof(rfc_CMD_FS_t));
+        memcpy(&EasyLink_RF_prop, RF_pProp_lrm, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, RF_pCmdPropTx_preDef, sizeof(rfc_CMD_PROP_TX_t));
+    }
+#if defined(DeviceFamily_CC26X0R2)
+    else if ((EasyLink_params.ui32ModType == EasyLink_Phy_2_4_100kbps2gfsk) && (ChipInfo_GetChipType() == CHIP_TYPE_CC2640R2))
+    {
+        memcpy(&EasyLink_cmdPropRadioSetup.setup,
+                RF_pCmdPropRadioSetup_2_4G_fsk_100,
+                sizeof(rfc_CMD_PROP_RADIO_SETUP_t));
+        memcpy(&EasyLink_cmdFs, RF_pCmdFs_preDef, sizeof(rfc_CMD_FS_t));
+        memcpy(&EasyLink_RF_prop, RF_pProp_2_4G_fsk, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, RF_pCmdPropTx_preDef, sizeof(rfc_CMD_PROP_TX_t));
+    }
+#endif
+    else if ((EasyLink_params.ui32ModType == EasyLink_Phy_2_4_200kbps2gfsk) && (ChipInfo_GetChipType() == CHIP_TYPE_CC2650))
+    {
+        memcpy(&EasyLink_cmdPropRadioSetup.setup,
+                RF_pCmdPropRadioSetup_2_4G_fsk,
+                sizeof(rfc_CMD_PROP_RADIO_SETUP_t));
+        memcpy(&EasyLink_cmdFs, RF_pCmdFs_preDef, sizeof(rfc_CMD_FS_t));
+        memcpy(&EasyLink_RF_prop, RF_pProp_2_4G_fsk, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, RF_pCmdPropTx_preDef, sizeof(rfc_CMD_PROP_TX_t));
+    }
+    else if ((EasyLink_params.ui32ModType == EasyLink_Phy_2_4_250kbps2gfsk) && (ChipInfo_GetChipType() == CHIP_TYPE_CC2640R2))
+    {
+        memcpy(&EasyLink_cmdPropRadioSetup.setup,
+                RF_pCmdPropRadioSetup_2_4G_fsk,
+                sizeof(rfc_CMD_PROP_RADIO_SETUP_t));
+        memcpy(&EasyLink_cmdFs, RF_pCmdFs_preDef, sizeof(rfc_CMD_FS_t));
+        memcpy(&EasyLink_RF_prop, RF_pProp_2_4G_fsk, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, RF_pCmdPropTx_preDef, sizeof(rfc_CMD_PROP_TX_t));
+    }
+    else if ((EasyLink_params.ui32ModType == EasyLink_Phy_5kbpsSlLr) && !(ChipInfo_ChipFamilyIs_CC26x0()) &&
+             !(ChipInfo_ChipFamilyIs_CC26x0R2()))
+    {
+#if (defined Board_CC1352P1_LAUNCHXL)  || (defined Board_CC1352P_2_LAUNCHXL)  || \
+    (defined Board_CC1352P_4_LAUNCHXL)
+        memcpy(&EasyLink_cmdPropRadioSetup.divSetup, RF_pCmdPropRadioDivSetup_sl_lr, sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_PA_t));
+#else
+        memcpy(&EasyLink_cmdPropRadioSetup.divSetup, RF_pCmdPropRadioDivSetup_sl_lr, sizeof(rfc_CMD_PROP_RADIO_DIV_SETUP_t));
+#endif
+        memcpy(&EasyLink_cmdFs, RF_pCmdFs_preDef, sizeof(rfc_CMD_FS_t));
+#if (defined Board_CC1352P_4_LAUNCHXL)
+        // CC1352P-4 SLR operates at 433.92 MHz
+        EasyLink_cmdFs.frequency = 0x01B1;
+        EasyLink_cmdFs.fractFreq = 0xEB9A;
+#endif
+        memcpy(&EasyLink_RF_prop, RF_pProp_sl_lr, sizeof(RF_Mode));
+        memcpy(&EasyLink_cmdPropRxAdv, RF_pCmdPropRxAdv_preDef, sizeof(rfc_CMD_PROP_RX_ADV_t));
+        memcpy(&EasyLink_cmdPropTx, RF_pCmdPropTx_preDef, sizeof(rfc_CMD_PROP_TX_t));
     }
     else
     {
-        memcpy(&EasyLink_cmdPropRadioSetup.setup, (rfSetting->RF_uCmdPropRadio.RF_pCmdPropRadioSetup), sizeof(rfc_CMD_PROP_RADIO_SETUP_t));
+        if (busyMutex != NULL)
+        {
+            Semaphore_post(busyMutex);
+        }
+        return EasyLink_Status_Param_Error;
     }
-    memcpy(&EasyLink_cmdFs, (rfSetting->RF_pCmdFs), sizeof(rfc_CMD_FS_t));
-    memcpy(&EasyLink_RF_prop, (rfSetting->RF_pProp), sizeof(RF_Mode));
-    memcpy(&EasyLink_cmdPropRxAdv,(rfSetting->RF_pCmdPropRxAdv), sizeof(rfc_CMD_PROP_RX_ADV_t));
-    if(createCmdTxAdvFromTx)
-    {
-        createTxAdvFromTx(&EasyLink_cmdPropTxAdv, (rfSetting->RF_pCmdPropTx));
-    }
-    else
-    {
-        memcpy(&EasyLink_cmdPropTxAdv, (rfSetting->RF_pCmdPropTxAdv), sizeof(rfc_CMD_PROP_TX_ADV_t));
-    }
-
 #if !(defined(DeviceFamily_CC26X0R2))
     if (rfModeMultiClient)
     {
@@ -830,68 +706,26 @@ EasyLink_Status EasyLink_init(EasyLink_Params *params)
     rfHandle = RF_open(&rfObject, &EasyLink_RF_prop,
             (RF_RadioSetup*)&EasyLink_cmdPropRadioSetup.setup, &rfParams);
 
-    // Setup the Proprietary Rx Advanced Command
-    EasyLink_cmdPropRxAdv.status = 0x0000;
-    EasyLink_cmdPropRxAdv.pNextOp = 0;
-    EasyLink_cmdPropRxAdv.startTime = 0x00000000;
-    EasyLink_cmdPropRxAdv.startTrigger.triggerType = 0x0;
-    EasyLink_cmdPropRxAdv.startTrigger.bEnaCmd = 0x0;
-    EasyLink_cmdPropRxAdv.startTrigger.triggerNo = 0x0;
-    EasyLink_cmdPropRxAdv.startTrigger.pastTrig = 0x0;
-    EasyLink_cmdPropRxAdv.condition.rule = 0x1;
-    EasyLink_cmdPropRxAdv.condition.nSkip = 0x0;
-    EasyLink_cmdPropRxAdv.pktConf.bFsOff = 0x0;
-    EasyLink_cmdPropRxAdv.pktConf.bRepeatOk = 0x0;
-    EasyLink_cmdPropRxAdv.pktConf.bRepeatNok = 0x0;
-    EasyLink_cmdPropRxAdv.pktConf.bUseCrc = 0x1;
-    EasyLink_cmdPropRxAdv.pktConf.bCrcIncSw = 0x0;
-    EasyLink_cmdPropRxAdv.pktConf.endType = 0x0;
-    EasyLink_cmdPropRxAdv.pktConf.filterOp = !(EASYLINK_ENABLE_ADDR_FILTERING);
-    EasyLink_cmdPropRxAdv.rxConf.bAutoFlushIgnored = 0x0;
-    EasyLink_cmdPropRxAdv.rxConf.bAutoFlushCrcErr = 0x0;
-    EasyLink_cmdPropRxAdv.rxConf.bIncludeHdr = 0x1;
-    EasyLink_cmdPropRxAdv.rxConf.bIncludeCrc = 0x0;
-    EasyLink_cmdPropRxAdv.rxConf.bAppendRssi = 0x0;
-    EasyLink_cmdPropRxAdv.rxConf.bAppendTimestamp = 0x0;
-    EasyLink_cmdPropRxAdv.rxConf.bAppendStatus = 0x0;
-    EasyLink_cmdPropRxAdv.syncWord1 = 0;
+    //Set Rx packet size, taking into account addr which is not in the hdr
+    //(only length can be)
     EasyLink_cmdPropRxAdv.maxPktLen = EASYLINK_MAX_DATA_LENGTH +
             EASYLINK_MAX_ADDR_SIZE;
-    if(useIeeeHeader)
-    {
-        EasyLink_cmdPropRxAdv.syncWord0 = EASYLINK_IEEE_TRX_SYNC_WORD;
-        EasyLink_cmdPropRxAdv.hdrConf.numHdrBits = EASYLINK_IEEE_HDR_NBITS;
-        EasyLink_cmdPropRxAdv.lenOffset = EASYLINK_IEEE_LEN_OFFSET;
-        // Exclude the header from the CRC calculation
-        EasyLink_cmdPropRxAdv.pktConf.bCrcIncHdr = 0U;
-    }
-    else
-    {
-        EasyLink_cmdPropRxAdv.syncWord0 = EASYLINK_PROP_TRX_SYNC_WORD;
-        EasyLink_cmdPropRxAdv.hdrConf.numHdrBits = EASYLINK_PROP_HDR_NBITS;
-        EasyLink_cmdPropRxAdv.lenOffset = EASYLINK_PROP_LEN_OFFSET;
-        // Include the header in the CRC calculation - The header (length
-        // byte) is considered to be the first byte of the payload
-        EasyLink_cmdPropRxAdv.pktConf.bCrcIncHdr = 1U;
-    }
-    EasyLink_cmdPropRxAdv.hdrConf.numLenBits = EASYLINK_HDR_LEN_NBITS;
-    EasyLink_cmdPropRxAdv.hdrConf.lenPos = 0;
-    EasyLink_cmdPropRxAdv.addrConf.addrType = 0;
-    EasyLink_cmdPropRxAdv.addrConf.addrSize = addrSize;
-    EasyLink_cmdPropRxAdv.addrConf.addrPos = 0;
-    EasyLink_cmdPropRxAdv.addrConf.numAddr = EASYLINK_NUM_ADDR_FILTER;
-    EasyLink_cmdPropRxAdv.endTrigger.triggerType = 0x1;
-    EasyLink_cmdPropRxAdv.endTrigger.bEnaCmd = 0x0;
-    EasyLink_cmdPropRxAdv.endTrigger.triggerNo = 0x0;
-    EasyLink_cmdPropRxAdv.endTrigger.pastTrig = 0x0;
-    EasyLink_cmdPropRxAdv.endTime = 0x00000000;
     EasyLink_cmdPropRxAdv.pAddr = addrFilterTable;
-    EasyLink_cmdPropRxAdv.pQueue = &dataQueue;
+    addrSize = 1;
+    EasyLink_cmdPropRxAdv.addrConf.addrSize = addrSize; //Set addr size to the
+                                                        //default
+    EasyLink_cmdPropRxAdv.pktConf.filterOp = 1;  // Disable Addr filter by
+                                                 //default
+    EasyLink_cmdPropRxAdv.pQueue = &dataQueue;   // Set the Data Entity queue
+                                                 // for received data
     EasyLink_cmdPropRxAdv.pOutput = (uint8_t*)&rxStatistics;
 
     //Set the frequency
     RF_runCmd(rfHandle, (RF_Op*)&EasyLink_cmdFs, RF_PriorityNormal, 0, //asyncCmdCallback,
             EASYLINK_RF_EVENT_MASK);
+
+    //set default asyncRxTimeOut to 0
+    asyncRxTimeOut = 0;
 
     //Create a semaphore for blocking commands
     Semaphore_Params semParams;
@@ -934,7 +768,7 @@ EasyLink_Status EasyLink_setFrequency(uint32_t ui32Frequency)
         return EasyLink_Status_Config_Error;
     }
     //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
+    if (Semaphore_pend(busyMutex, 0) == FALSE)
     {
         return EasyLink_Status_Busy_Error;
     }
@@ -990,7 +824,7 @@ uint32_t EasyLink_getFrequency(void)
     return freq_khz;
 }
 
-EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
+EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerdBm)
 {
     EasyLink_Status status = EasyLink_Status_Cmd_Error;
 
@@ -999,7 +833,7 @@ EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
         return EasyLink_Status_Config_Error;
     }
     //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
+    if (Semaphore_pend(busyMutex, 0) == FALSE)
     {
         return EasyLink_Status_Busy_Error;
     }
@@ -1014,14 +848,30 @@ EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
     RF_TxPowerTable_Value newValue;
     uint8_t rfPowerTableSize = 0;
 
-    newValue = RF_TxPowerTable_findValue((RF_TxPowerTable_Entry *)rfSetting->RF_pTxPowerTable, i8TxPowerDbm);
+#if (defined Board_CC1352P1_LAUNCHXL) || (defined Board_CC1352P_4_LAUNCHXL)
+    // Search the High PA power table for the desired power level
+    newValue = RF_TxPowerTable_findValue((RF_TxPowerTable_Entry *)PROP_RF_txPowerTableHpa, i8TxPowerdBm);
     if(newValue.rawValue != RF_TxPowerTable_INVALID_VALUE)
     {
-        // Found a valid entry
-        rfPowerTable = (RF_TxPowerTable_Entry *)rfSetting->RF_pTxPowerTable;
-        rfPowerTableSize = rfSetting->RF_txPowerTableSize;
+        // Either value was found in this table, or greater than the max
+        // supported, in which case its set to the max entry
+        rfPowerTable = (RF_TxPowerTable_Entry *)PROP_RF_txPowerTableHpa;
+        rfPowerTableSize = PROP_RF_txPowerTableHpaSize;
     }
     else
+#endif
+    {
+        // Search the default PA power table for the desired power level
+        newValue = RF_TxPowerTable_findValue((RF_TxPowerTable_Entry *)PROP_RF_txPowerTable, i8TxPowerdBm);
+        if(newValue.rawValue != RF_TxPowerTable_INVALID_VALUE)
+        {
+            // Found a valid entry
+            rfPowerTable = (RF_TxPowerTable_Entry *)PROP_RF_txPowerTable;
+            rfPowerTableSize = PROP_RF_txPowerTableSize;
+        }
+    }
+
+    if(newValue.rawValue == RF_TxPowerTable_INVALID_VALUE)
     {
         //Release the busyMutex
         Semaphore_post(busyMutex);
@@ -1033,7 +883,7 @@ EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
     //the ccfg; this does not apply to 2.4GHz proprietary modes either
 #if (CCFG_FORCE_VDDR_HH != 0x1)
     if((newValue.paType == RF_TxPowerTable_DefaultPA) &&
-       (i8TxPowerDbm == rfPowerTable[rfPowerTableSize-2].power))
+       (i8TxPowerdBm == rfPowerTable[rfPowerTableSize-2].power))
     {
 #if !(defined Board_CC2640R2_LAUNCHXL)
         //Release the busyMutex
@@ -1072,19 +922,19 @@ EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
 
     cmdSetPower.commandNo = CMD_SET_TX_POWER;
 
-    if (i8TxPowerDbm < rfPowerTable[0].dbm)
+    if (i8TxPowerdBm < rfPowerTable[0].dbm)
     {
-        i8TxPowerDbm = rfPowerTable[0].dbm;
+        i8TxPowerdBm = rfPowerTable[0].dbm;
     }
-    else if (i8TxPowerDbm > rfPowerTable[rfPowerTableSize-1].dbm )
+    else if (i8TxPowerdBm > rfPowerTable[rfPowerTableSize-1].dbm )
     {
-        i8TxPowerDbm = rfPowerTable[rfPowerTableSize-1].dbm;
+        i8TxPowerdBm = rfPowerTable[rfPowerTableSize-1].dbm;
     }
 
     //if max power is requested then the CCFG_FORCE_VDDR_HH must be set in
     //the ccfg
 #if (CCFG_FORCE_VDDR_HH != 0x1)
-    if (i8TxPowerDbm == rfPowerTable[rfPowerTableSize-1].dbm)
+    if (i8TxPowerdBm == rfPowerTable[rfPowerTableSize-1].dbm)
     {
         //Release the busyMutex
         Semaphore_post(busyMutex);
@@ -1094,7 +944,7 @@ EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
 
     for (txPowerIdx = 0; txPowerIdx < rfPowerTableSize; txPowerIdx++)
     {
-        if (i8TxPowerDbm >= rfPowerTable[txPowerIdx].dbm)
+        if (i8TxPowerdBm >= rfPowerTable[txPowerIdx].dbm)
         {
             cmdSetPower.txPower = rfPowerTable[txPowerIdx].txPower;
             EasyLink_cmdPropRadioSetup.setup.txPower = rfPowerTable[txPowerIdx].txPower;
@@ -1122,9 +972,9 @@ EasyLink_Status EasyLink_setRfPower(int8_t i8TxPowerDbm)
     return status;
 }
 
-EasyLink_Status EasyLink_getRfPower(int8_t *pi8TxPowerDbm)
+EasyLink_Status EasyLink_getRfPower(int8_t *pi8TxPowerdBm)
 {
-    int8_t txPowerDbm = 0xff;
+    int8_t txPowerdBm = 0xff;
 
     if ( (!configured) || suspended)
     {
@@ -1148,18 +998,28 @@ EasyLink_Status EasyLink_getRfPower(int8_t *pi8TxPowerDbm)
     }
     else
     {
-        rfPowerTable = (RF_TxPowerTable_Entry *)rfSetting->RF_pTxPowerTable;
-        rfPowerTableSize = rfSetting->RF_txPowerTableSize;
-        txPowerDbm = RF_TxPowerTable_findPowerLevel(rfPowerTable, currValue);
+        if(currValue.paType == RF_TxPowerTable_DefaultPA)
+        {
+            rfPowerTable = (RF_TxPowerTable_Entry *)PROP_RF_txPowerTable;
+            rfPowerTableSize = PROP_RF_txPowerTableSize;
+        }
+#if (defined Board_CC1352P1_LAUNCHXL) || (defined Board_CC1352P_4_LAUNCHXL)
+        else
+        {
+            rfPowerTable = (RF_TxPowerTable_Entry *)PROP_RF_txPowerTableHpa;
+            rfPowerTableSize = PROP_RF_txPowerTableHpaSize;
+        }
+#endif
+        txPowerdBm = RF_TxPowerTable_findPowerLevel(rfPowerTable, currValue);
 
         //if CCFG_FORCE_VDDR_HH is not set max power cannot be achieved; this
         //does not apply to 2.4GHz proprietary modes either
 #if (CCFG_FORCE_VDDR_HH != 0x1)
         if((currValue.paType == RF_TxPowerTable_DefaultPA) &&
-           (txPowerDbm == rfPowerTable[rfPowerTableSize-2].power))
+           (txPowerdBm == rfPowerTable[rfPowerTableSize-2].power))
         {
 #if !(defined Board_CC2640R2_LAUNCHXL)
-            txPowerDbm = rfPowerTable[rfPowerTableSize-3].power;
+            txPowerdBm = rfPowerTable[rfPowerTableSize-3].power;
 #endif
         }
 #else
@@ -1173,21 +1033,21 @@ EasyLink_Status EasyLink_getRfPower(int8_t *pi8TxPowerDbm)
     {
         if (rfPowerTable[txPowerIdx].txPower == EasyLink_cmdPropRadioSetup.setup.txPower)
         {
-            txPowerDbm = rfPowerTable[txPowerIdx].dbm;
+            txPowerdBm = rfPowerTable[txPowerIdx].dbm;
             continue;
         }
     }
 
     //if CCFG_FORCE_VDDR_HH is not set max power cannot be achieved
 #if (CCFG_FORCE_VDDR_HH != 0x1)
-    if (txPowerDbm == rfPowerTable[rfPowerTableSize-1].dbm)
+    if (txPowerdBm == rfPowerTable[rfPowerTableSize-1].dbm)
     {
-        txPowerDbm = rfPowerTable[rfPowerTableSize-2].dbm;
+        txPowerdBm = rfPowerTable[rfPowerTableSize-2].dbm;
     }
 #endif
 #endif
 
-    *pi8TxPowerDbm = txPowerDbm;
+    *pi8TxPowerdBm = txPowerdBm;
 
     return EasyLink_Status_Success;
 }
@@ -1199,7 +1059,7 @@ EasyLink_Status EasyLink_getRssi(int8_t *pi8Rssi)
         return EasyLink_Status_Config_Error;
     }
 
-    *pi8Rssi = RF_getRssi(rfHandle);
+	*pi8Rssi = RF_getRssi(rfHandle);
 
     return EasyLink_Status_Success;
 }
@@ -1227,61 +1087,49 @@ EasyLink_Status EasyLink_transmit(EasyLink_TxPacket *txPacket)
     {
         return EasyLink_Status_Config_Error;
     }
-    if (txPacket->len > EASYLINK_MAX_DATA_LENGTH)
-    {
-        return EasyLink_Status_Param_Error;
-    }
     //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
+    if (Semaphore_pend(busyMutex, 0) == FALSE)
     {
         return EasyLink_Status_Busy_Error;
     }
 
-
-    if(useIeeeHeader)
+    if (txPacket->len > EASYLINK_MAX_DATA_LENGTH)
     {
-        uint16_t ieeeHdr = EASYLINK_IEEE_HDR_CREATE(EASYLINK_IEEE_HDR_CRC_2BYTE, EASYLINK_IEEE_HDR_WHTNG_EN, (txPacket->len + addrSize + sizeof(ieeeHdr)));
-        hdrSize     = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_IEEE_HDR_NBITS);
-        txBuffer[0] = (uint8_t)(ieeeHdr & 0x00FF);
-        txBuffer[1] = (uint8_t)((ieeeHdr & 0xFF00) >> 8);
+        return EasyLink_Status_Param_Error;
     }
-    else
-    {
-        hdrSize     = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_PROP_HDR_NBITS);
-        txBuffer[0] = txPacket->len + addrSize;
-    }
-    memcpy(&txBuffer[hdrSize], txPacket->dstAddr, addrSize);
-    memcpy(&txBuffer[addrSize + hdrSize], txPacket->payload, txPacket->len);
 
-    //packet length to Tx includes address and length field
-    EasyLink_cmdPropTxAdv.pktLen = txPacket->len + addrSize + hdrSize;
-    EasyLink_cmdPropTxAdv.pPkt = txBuffer;
+    memcpy(txBuffer, txPacket->dstAddr, addrSize);
+    memcpy(txBuffer + addrSize, txPacket->payload, txPacket->len);
+
+    //packet length to Tx includes address
+    EasyLink_cmdPropTx.pktLen = txPacket->len + addrSize;
+    EasyLink_cmdPropTx.pPkt = txBuffer;
 
     if(EasyLink_params.ui32ModType == EasyLink_Phy_5kbpsSlLr)
     {
         /* calculate the command time:
          * (len + preamble + phy len + address) * 8bits / 5kbps */
-        cmdTime = ((EasyLink_cmdPropTxAdv.pktLen + 10 + addrSize) * 8) / 5;
+        cmdTime = ((EasyLink_cmdPropTx.pktLen + 10 + addrSize) * 8) / 5;
     }
     else //assume 50kbps
     {
         /* calculate the command time:
          * (len + preamble + syncword + len + address) * 8bits / 50kbps */
-        cmdTime = ((EasyLink_cmdPropTxAdv.pktLen + 10 + addrSize) * 8) / 50;
+        cmdTime = ((EasyLink_cmdPropTx.pktLen + 10 + addrSize) * 8) / 50;
     }
 
     if (txPacket->absTime != 0)
     {
-        EasyLink_cmdPropTxAdv.startTrigger.triggerType = TRIG_ABSTIME;
-        EasyLink_cmdPropTxAdv.startTrigger.pastTrig = 1;
-        EasyLink_cmdPropTxAdv.startTime = txPacket->absTime;
-        schParams_prop.endTime = EasyLink_cmdPropTxAdv.startTime + EasyLink_ms_To_RadioTime(cmdTime);
+        EasyLink_cmdPropTx.startTrigger.triggerType = TRIG_ABSTIME;
+        EasyLink_cmdPropTx.startTrigger.pastTrig = 1;
+        EasyLink_cmdPropTx.startTime = txPacket->absTime;
+        schParams_prop.endTime = EasyLink_cmdPropTx.startTime + EasyLink_ms_To_RadioTime(cmdTime);
     }
     else
     {
-        EasyLink_cmdPropTxAdv.startTrigger.triggerType = TRIG_NOW;
-        EasyLink_cmdPropTxAdv.startTrigger.pastTrig = 1;
-        EasyLink_cmdPropTxAdv.startTime = 0;
+        EasyLink_cmdPropTx.startTrigger.triggerType = TRIG_NOW;
+        EasyLink_cmdPropTx.startTrigger.pastTrig = 1;
+        EasyLink_cmdPropTx.startTime = 0;
         schParams_prop.endTime = RF_getCurrentTime() + EasyLink_ms_To_RadioTime(cmdTime);
     }
 
@@ -1289,12 +1137,12 @@ EasyLink_Status EasyLink_transmit(EasyLink_TxPacket *txPacket)
     if(rfModeMultiClient)
     {
         schParams_prop.priority = RF_PriorityHigh;
-        cmdHdl = RF_scheduleCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTxAdv,
+        cmdHdl = RF_scheduleCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTx,
                     &schParams_prop, 0, EASYLINK_RF_EVENT_MASK);
     }
     else
     {
-        cmdHdl = RF_postCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTxAdv,
+        cmdHdl = RF_postCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTx,
             RF_PriorityHigh, 0, EASYLINK_RF_EVENT_MASK);
     }
 
@@ -1323,67 +1171,52 @@ EasyLink_Status EasyLink_transmitAsync(EasyLink_TxPacket *txPacket, EasyLink_TxD
     {
         return EasyLink_Status_Config_Error;
     }
-    if (EasyLink_CmdHandle_isValid(asyncCmdHndl))
+    //Check and take the busyMutex
+    if ( (Semaphore_pend(busyMutex, 0) == FALSE) || (EasyLink_CmdHandle_isValid(asyncCmdHndl)) )
     {
         return EasyLink_Status_Busy_Error;
     }
+
     if (txPacket->len > EASYLINK_MAX_DATA_LENGTH)
     {
         return EasyLink_Status_Param_Error;
-    }
-    //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
-    {
-        return EasyLink_Status_Busy_Error;
     }
 
     //store application callback
     txCb = cb;
 
-    if(useIeeeHeader)
-    {
-        uint16_t ieeeHdr = EASYLINK_IEEE_HDR_CREATE(EASYLINK_IEEE_HDR_CRC_2BYTE, EASYLINK_IEEE_HDR_WHTNG_EN, (txPacket->len + addrSize + sizeof(ieeeHdr)));
-        hdrSize     = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_IEEE_HDR_NBITS);
-        txBuffer[0] = (uint8_t)(ieeeHdr & 0x00FF);
-        txBuffer[1] = (uint8_t)((ieeeHdr & 0xFF00) >> 8);
-    }
-    else
-    {
-        hdrSize     = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_PROP_HDR_NBITS);
-        txBuffer[0] = txPacket->len + addrSize;
-    }
-    memcpy(&txBuffer[hdrSize], txPacket->dstAddr, addrSize);
-    memcpy(&txBuffer[addrSize + hdrSize], txPacket->payload, txPacket->len);
+    memcpy(txBuffer, txPacket->dstAddr, addrSize);
+    memcpy(txBuffer + addrSize, txPacket->payload, txPacket->len);
 
-    //packet length to Tx includes address and length field
-    EasyLink_cmdPropTxAdv.pktLen = txPacket->len + addrSize + hdrSize;
-    EasyLink_cmdPropTxAdv.pPkt = txBuffer;
+    //packet length to Tx includes address
+    EasyLink_cmdPropTx.pktLen = txPacket->len + addrSize;
+    EasyLink_cmdPropTx.pPkt = txBuffer;
 
     if(EasyLink_params.ui32ModType == EasyLink_Phy_5kbpsSlLr)
     {
         /* calculate the command time:
          * (len + preamble + phy len + address) * 8bits / 5kbps */
-        cmdTime = ((EasyLink_cmdPropTxAdv.pktLen + 10 + addrSize) * 8) / 5;
+        cmdTime = ((EasyLink_cmdPropTx.pktLen + 10 + addrSize) * 8) / 5;
     }
     else //assume 50kbps
     {
         /* calculate the command time:
          * (len + preamble + syncword + len + address) * 8bits / 50kbps */
-        cmdTime = ((EasyLink_cmdPropTxAdv.pktLen + 10 + addrSize) * 8) / 50;
+        cmdTime = ((EasyLink_cmdPropTx.pktLen + 10 + addrSize) * 8) / 50;
     }
 
     if (txPacket->absTime != 0)
     {
-        EasyLink_cmdPropTxAdv.startTrigger.triggerType = TRIG_ABSTIME;
-        EasyLink_cmdPropTxAdv.startTrigger.pastTrig = 1;
-        EasyLink_cmdPropTxAdv.startTime = txPacket->absTime;
-        schParams_prop.endTime = EasyLink_cmdPropTxAdv.startTime + EasyLink_ms_To_RadioTime(cmdTime);
+        EasyLink_cmdPropTx.startTrigger.triggerType = TRIG_ABSTIME;
+        EasyLink_cmdPropTx.startTrigger.pastTrig = 1;
+        EasyLink_cmdPropTx.startTime = txPacket->absTime;
+        schParams_prop.endTime = EasyLink_cmdPropTx.startTime + EasyLink_ms_To_RadioTime(cmdTime);
     }
     else
     {
-        EasyLink_cmdPropTxAdv.startTrigger.triggerType = TRIG_NOW;
-        EasyLink_cmdPropTxAdv.startTrigger.pastTrig = 1;
-        EasyLink_cmdPropTxAdv.startTime = 0;
+        EasyLink_cmdPropTx.startTrigger.triggerType = TRIG_NOW;
+        EasyLink_cmdPropTx.startTrigger.pastTrig = 1;
+        EasyLink_cmdPropTx.startTime = 0;
         schParams_prop.endTime = RF_getCurrentTime() + EasyLink_ms_To_RadioTime(cmdTime);
     }
 
@@ -1391,12 +1224,12 @@ EasyLink_Status EasyLink_transmitAsync(EasyLink_TxPacket *txPacket, EasyLink_TxD
     if(rfModeMultiClient)
     {
         schParams_prop.priority = RF_PriorityHigh;
-        asyncCmdHndl = RF_scheduleCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTxAdv,
+        asyncCmdHndl = RF_scheduleCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTx,
             &schParams_prop, txDoneCallback, EASYLINK_RF_EVENT_MASK);
     }
     else
     {
-        asyncCmdHndl = RF_postCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTxAdv,
+        asyncCmdHndl = RF_postCmd(rfHandle, (RF_Op*)&EasyLink_cmdPropTx,
             RF_PriorityHigh, txDoneCallback, EASYLINK_RF_EVENT_MASK);
     }
 
@@ -1423,7 +1256,8 @@ EasyLink_Status EasyLink_transmitCcaAsync(EasyLink_TxPacket *txPacket, EasyLink_
     {
         return EasyLink_Status_Config_Error;
     }
-    if (EasyLink_CmdHandle_isValid(asyncCmdHndl))
+    //Check and take the busyMutex
+    if ( (Semaphore_pend(busyMutex, 0) == FALSE) || (EasyLink_CmdHandle_isValid(asyncCmdHndl)) )
     {
         return EasyLink_Status_Busy_Error;
     }
@@ -1431,49 +1265,32 @@ EasyLink_Status EasyLink_transmitCcaAsync(EasyLink_TxPacket *txPacket, EasyLink_
     {
         return EasyLink_Status_Param_Error;
     }
-    //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
-    {
-        return EasyLink_Status_Busy_Error;
-    }
 
     //store application callback
     txCb = cb;
 
-    if(useIeeeHeader)
-    {
-        uint16_t ieeeHdr = EASYLINK_IEEE_HDR_CREATE(EASYLINK_IEEE_HDR_CRC_2BYTE, EASYLINK_IEEE_HDR_WHTNG_EN, (txPacket->len + addrSize + sizeof(ieeeHdr)));
-        hdrSize     = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_IEEE_HDR_NBITS);
-        txBuffer[0] = (uint8_t)(ieeeHdr & 0x00FF);
-        txBuffer[1] = (uint8_t)((ieeeHdr & 0xFF00) >> 8);
-    }
-    else
-    {
-        hdrSize     = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_PROP_HDR_NBITS);
-        txBuffer[0] = txPacket->len + addrSize;
-    }
-    memcpy(&txBuffer[hdrSize], txPacket->dstAddr, addrSize);
-    memcpy(&txBuffer[addrSize + hdrSize], txPacket->payload, txPacket->len);
+    memcpy(txBuffer, txPacket->dstAddr, addrSize);
+    memcpy(txBuffer + addrSize, txPacket->payload, txPacket->len);
 
     // Set the Carrier Sense command attributes
     // Chain the TX command to run after the CS command
-    EasyLink_cmdPropCs.pNextOp        = (rfc_radioOp_t *)&EasyLink_cmdPropTxAdv;
+    EasyLink_cmdPropCs.pNextOp        = (rfc_radioOp_t *)&EasyLink_cmdPropTx;
 
-    //packet length to Tx includes address and length field
-    EasyLink_cmdPropTxAdv.pktLen = txPacket->len + addrSize + hdrSize;
-    EasyLink_cmdPropTxAdv.pPkt = txBuffer;
+    //packet length to Tx includes address
+    EasyLink_cmdPropTx.pktLen = txPacket->len + addrSize;
+    EasyLink_cmdPropTx.pPkt = txBuffer;
 
     if(EasyLink_params.ui32ModType == EasyLink_Phy_5kbpsSlLr)
     {
         /* calculate the command time:
          * (len + preamble + phy len + address) * 8bits / 5kbps */
-        cmdTime = ((EasyLink_cmdPropTxAdv.pktLen + 10 + addrSize) * 8) / 5;
+        cmdTime = ((EasyLink_cmdPropTx.pktLen + 10 + addrSize) * 8) / 5;
     }
     else //assume 50kbps
     {
         /* calculate the command time:
          * (len + preamble + syncword + len + address) * 8bits / 50kbps */
-        cmdTime = ((EasyLink_cmdPropTxAdv.pktLen + 10 + addrSize) * 8) / 50;
+        cmdTime = ((EasyLink_cmdPropTx.pktLen + 10 + addrSize) * 8) / 50;
     }
 
     if (txPacket->absTime != 0)
@@ -1528,7 +1345,7 @@ EasyLink_Status EasyLink_receive(EasyLink_RxPacket *rxPacket)
         return EasyLink_Status_Config_Error;
     }
     //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
+    if (Semaphore_pend(busyMutex, 0) == FALSE)
     {
         return EasyLink_Status_Busy_Error;
     }
@@ -1607,18 +1424,10 @@ EasyLink_Status EasyLink_receive(EasyLink_RxPacket *rxPacket)
             {
                 //copy length from pDataEntry (- addrSize)
                 rxPacket->len = *(uint8_t*)(&pDataEntry->data) - addrSize;
-                if(useIeeeHeader)
-                {
-                    hdrSize = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_IEEE_HDR_NBITS);
-                }
-                else
-                {
-                    hdrSize = EASYLINK_HDR_SIZE_NBYTES(EASYLINK_PROP_HDR_NBITS);
-                }
                 //copy address
-                memcpy(rxPacket->dstAddr, (&pDataEntry->data + hdrSize), addrSize);
+                memcpy(rxPacket->dstAddr, (&pDataEntry->data + 1), addrSize);
                 //copy payload
-                memcpy(&rxPacket->payload, (&pDataEntry->data + hdrSize + addrSize), (rxPacket->len));
+                memcpy(&rxPacket->payload, (&pDataEntry->data + 1 + addrSize), (rxPacket->len));
                 rxPacket->rssi = rxStatistics.lastRssi;
 
                 status = EasyLink_Status_Success;
@@ -1664,12 +1473,8 @@ EasyLink_Status EasyLink_receiveAsync(EasyLink_ReceiveCb cb, uint32_t absTime)
     {
         return EasyLink_Status_Config_Error;
     }
-    if (EasyLink_CmdHandle_isValid(asyncCmdHndl))
-    {
-        return EasyLink_Status_Busy_Error;
-    }
     //Check and take the busyMutex
-    if (Semaphore_pend(busyMutex, 0) == false)
+    if ( (Semaphore_pend(busyMutex, 0) == FALSE) || (EasyLink_CmdHandle_isValid(asyncCmdHndl)) )
     {
         return EasyLink_Status_Busy_Error;
     }
@@ -1797,19 +1602,15 @@ EasyLink_Status EasyLink_enableRxAddrFilter(uint8_t* pui8AddrFilterTable, uint8_
     {
         return EasyLink_Status_Config_Error;
     }
-    if (isAddrSizeValid(ui8AddrSize) == false)
-    {
-       return EasyLink_Status_Param_Error;
-    }
-    if ( Semaphore_pend(busyMutex, 0) == false )
+    if ( Semaphore_pend(busyMutex, 0) == FALSE )
     {
         return EasyLink_Status_Busy_Error;
     }
 
     if ( (pui8AddrFilterTable != NULL) &&
-         (ui8AddrSize != 0) && (ui8NumAddrs != 0) &&
-         (ui8AddrSize == addrSize) &&
-         (ui8NumAddrs <= EASYLINK_MAX_ADDR_FILTERS) )
+            (ui8AddrSize != 0) && (ui8NumAddrs != 0) &&
+            (ui8AddrSize == addrSize) &&
+            (ui8NumAddrs <= EASYLINK_MAX_ADDR_FILTERS) )
     {
         memcpy(addrFilterTable, pui8AddrFilterTable, ui8AddrSize * ui8NumAddrs);
         EasyLink_cmdPropRxAdv.addrConf.addrSize = ui8AddrSize;
@@ -1838,7 +1639,7 @@ EasyLink_Status EasyLink_setCtrl(EasyLink_CtrlOption Ctrl, uint32_t ui32Value)
     switch(Ctrl)
     {
         case EasyLink_Ctrl_AddSize:
-            if (isAddrSizeValid(ui32Value))
+            if (ui32Value <= EASYLINK_MAX_ADDR_SIZE)
             {
                 addrSize = (uint8_t) ui32Value;
                 EasyLink_cmdPropRxAdv.addrConf.addrSize = addrSize;

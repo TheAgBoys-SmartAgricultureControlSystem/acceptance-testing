@@ -9,6 +9,14 @@ uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/includ
 uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/machine/_stdint.h
 uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/sys/_stdint.h
 uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stddef.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdlib.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/_ti_config.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/linkage.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdio.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdarg.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/math.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/_defs.h
+uartecho.obj: /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/machine/_limits.h
 uartecho.obj: /Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/source/ti/drivers/GPIO.h
 uartecho.obj: /Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/source/ti/drivers/UART.h
 uartecho.obj: ../Board.h
@@ -39,6 +47,14 @@ uartecho.obj: /Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/sourc
 /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/machine/_stdint.h: 
 /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/sys/_stdint.h: 
 /Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stddef.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdlib.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/_ti_config.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/linkage.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdio.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdarg.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/math.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/_defs.h: 
+/Applications/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/machine/_limits.h: 
 /Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/source/ti/drivers/GPIO.h: 
 /Users/HeinzBoehmer/ti/simplelink_cc13x2_26x2_sdk_2_40_00_81/source/ti/drivers/UART.h: 
 ../Board.h: 

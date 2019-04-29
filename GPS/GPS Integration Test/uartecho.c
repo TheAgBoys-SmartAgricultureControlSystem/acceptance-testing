@@ -35,6 +35,9 @@
  */
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 
 /* Driver Header files */
 #include <ti/drivers/GPIO.h>
@@ -43,14 +46,113 @@
 /* Example/Board Header files */
 #include "Board.h"
 
+#define PI 3.14156
+#define theoreticalLatitude 40.0065079
+#define theoreticalLongitude -105.262138
+
+int parseUART(char *lineBuffer, char *latitude, char *longitude, char *latDirection, char *longDirection) {
+    int latitudeIndex, longitudeIndex = 0; // Set indexes for strings to 0
+
+    // Get latitude, lineBuffer[6] is a comma
+    int i = 7;
+
+    while (lineBuffer[i] != ',') {
+        if (lineBuffer[i] != ' ') {
+            latitude[latitudeIndex] = lineBuffer[i];
+            latitudeIndex++;
+        }
+        i++;
+    }
+
+    if (latitudeIndex == 0) return 0; // Return 0 (fail) if no data to parse
+
+    latitude[latitudeIndex] = '\0'; // Null terminate latitude
+    i++; // Skip comma
+
+    // Get N or S
+    while (lineBuffer[i] != ',') {
+        if (lineBuffer[i] == 'N' || lineBuffer[i] == 'S') {
+            *latDirection = lineBuffer[i];
+            latitudeIndex++;
+        }
+        i++;
+    }
+
+    i++; // Skip comma
+
+
+    // Get longitude
+    while (lineBuffer[i] != ',') {
+       if (lineBuffer[i] != ' ') {
+           longitude[longitudeIndex] = lineBuffer[i];
+           longitudeIndex++;
+       }
+       i++;
+    }
+
+    longitude[longitudeIndex] = '\0'; // Null terminate longitude
+    i++; // Skip comma
+
+
+    // Get E or W
+    while (lineBuffer[i] != ',') {
+       if (lineBuffer[i] == 'E' || lineBuffer[i] == 'W') {
+           *longDirection = lineBuffer[i];
+           latitudeIndex++;
+       }
+       i++;
+    }
+
+    return 1; // No errors
+}
+
+// Convert GPS coordinate format to normal decimal degrees
+float convertToDecimalDegrees(float gpsFormat, char direction) {
+    // GPS format for longitude is ddmm.mmmm
+    // To convert to decimal degrees we have to split it into two parts:
+    // dd mm.mmmm
+    // Then perform the following operation dd + (mm.mmmm/60)
+
+    int dd = (int) (gpsFormat / 100); // Divide by 100 to get dd.mmmmmm, then cast to int to strip decimals
+    float mm = gpsFormat - (dd * 100); // ddmm.mmmm - (dd * 100) = ddmm.mmmm - dd00 = mm.mmmm
+
+    return  (direction == 'S' || direction == 'W') ? ((dd + (mm / 60)) * -1) : (dd + (mm / 60)); // Account for direction provided for GPS (N or W indicate negative coordinates)
+}
+
+// Converts degrees to radians
+float degreestoRadians(float degrees) {
+    return degrees * PI / 180;
+}
+
+// Calculated distance between two coordinates in m
+float distanceBetweenCordinates(float lat1, float lon1, float lat2, float lon2) {
+    int earthRadius = 6371000; // Radius of earth in meters
+    lat1 = degreestoRadians(lat1);
+    lon1 = degreestoRadians(lon1);
+    lat2 = degreestoRadians(lat2);
+    lon2 = degreestoRadians(lon2);
+    float deltaLat = lat1 - lat2;
+    float deltaLon = lon1- lon2;
+
+    // Calculate distance between coordinates using law of haversines
+    float a = sin(deltaLat / 2) * sin(deltaLat / 2) + cos(lat1) * cos(lat2) * sin(deltaLon / 2) * sin(deltaLon / 2);
+    float c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadius * c;
+}
+
 /*
  *  ======== mainThread ========
  */
 void *mainThread(void *arg0)
 {
     char        input;
-    const char  echoPrompt[] = "Echoing characters:\r\n";
+    char        inputDebug;
+    const char waitingForFix[] = "Waiting for GPS fix...\r\n";
+    const char CEPText[] = ", CEP: ";
+    const char CEPString[20]; // String to use with ToString for printing CEP
     UART_Handle uart;
+    UART_Handle uartDebug;
     UART_Params uartParams;
 
     /* Call driver init functions */
@@ -78,22 +180,32 @@ void *mainThread(void *arg0)
         while (1);
     }
 
-    UART_write(uart, echoPrompt, sizeof(echoPrompt));
+    UART_write(uart, waitingForFix, sizeof(waitingForFix));
 
-    char lineBuffer[100];
-    int bufferIndex = 0;
-
-    int i = 0;
+    char    lineBuffer[100];
+    int     bufferIndex = 0;
+    char    latitude[20]; // Stores values for latitude
+    char    latDirection; // Stores 'N' or 'S'
+    char    longitude[20]; // Stores values for longitude
+    char    longDirection; // Stores 'E' or 'W'
+    int     print = 0; // Will only print values if print == 1
+    int     alreadyWaiting = 1;
+    float   latitudeFloat;
+    float   longitudeFloat;
+    float   CEP = 0.0;
+    int CEPStringLength = 0;
 
     /* Loop forever echoing */
     while (1) {
         UART_read(uart, &input, 1);
 
-        if (input == 13 || input == '\n') {
-            bufferIndex = 0; // 13 is ascii for carriage return
+        print = 0;
+
+        if (input == '\r' || input == '\n') {
+            bufferIndex = 0;
 
             if (lineBuffer[5] == 'L') { // Add longitude and latitude to write buffer
-                lineBuffer[6] = ',';
+                /*lineBuffer[6] = ',';
                 lineBuffer[7] = ' ';
                 lineBuffer[8] = '3';
                 lineBuffer[9] = '7';
@@ -126,58 +238,24 @@ void *mainThread(void *arg0)
                 lineBuffer[36] = 'W';
                 lineBuffer[37] = ',';
                 lineBuffer[38] = ' ';
-                lineBuffer[39] = '\n';
+                lineBuffer[39] = '\n';*/
 
-                // Get latitude, lineBuffer[6] is a comma
-                i = 7;
+                if (parseUART(lineBuffer, latitude, longitude, &latDirection, &longDirection)) { // Only continue if no errors from parse
+                    // Error calculations
+                    latitudeFloat = convertToDecimalDegrees(atof(latitude), latDirection);
+                    longitudeFloat = convertToDecimalDegrees(atof(longitude), longDirection);
 
-                while (lineBuffer[i] != ',') {
-                    input = lineBuffer[i];
-                    UART_write(uart, &input, 1);
-                    i++;
+                    CEP = distanceBetweenCordinates(latitudeFloat, longitudeFloat, theoreticalLatitude, theoreticalLongitude);
+
+                    print = 1; // Set print flag
+                    alreadyWaiting = 0;
                 }
 
-                i++; // Don't print comma
-
-
-                // Get N or S
-                while (lineBuffer[i] != ',') {
-                    input = lineBuffer[i];
-                    UART_write(uart, &input, 1);
-                    i++;
+                else if (!alreadyWaiting){
+                    UART_write(uart, waitingForFix, sizeof(waitingForFix));
+                    alreadyWaiting = 1;
                 }
-
-                i++; // Don't print comma
-
-
-               // Print comma for clarity
-               input = ',';
-               UART_write(uart, &input, 1);
-
-
-               // Get longitude
-               while (lineBuffer[i] != ',') {
-                   input = lineBuffer[i];
-                   UART_write(uart, &input, 1);
-                   i++;
-               }
-
-               i++; // Don't print comma
-
-
-               // Get E or W
-               while (lineBuffer[i] != ',') {
-                   input = lineBuffer[i];
-                   UART_write(uart, &input, 1);
-                   i++;
-               }
-
-
-               // Print newline for clarity
-               input = '\n';
-               UART_write(uart, &input, 1);
             }
-
         }
 
         else {
@@ -185,6 +263,53 @@ void *mainThread(void *arg0)
             bufferIndex++;
         }
 
-        //UART_write(uart, &input, 1);
+        if (print) {
+            int j = 0;
+
+            // Print latitude
+            for (j = 0; j < strlen(latitude); j++) {
+               input = latitude[j];
+               UART_write(uart, &input, 1);
+            }
+
+            input = ' ';
+            UART_write(uart, &input, 1);
+
+            // Print latitude direction
+            UART_write(uart, &latDirection, 1);
+
+            input = ',';
+            UART_write(uart, &input, 1);
+            input = ' ';
+            UART_write(uart, &input, 1);
+
+            // Print longitude
+            for (j = 0; j < strlen(longitude); j++) {
+              input = longitude[j];
+              UART_write(uart, &input, 1);
+            }
+
+            input = ' ';
+            UART_write(uart, &input, 1);
+
+            // Print longitude direction
+            UART_write(uart, &longDirection, 1);
+
+            // Write set up for CEP
+            UART_write(uart, CEPText, sizeof(CEPText));
+
+            // Print CEP
+            CEPStringLength = snprintf(NULL, 0, "%f", CEP); // Convert CEP to string with a total of 4 digits (should give three decimal points if GPS is accurate enough)
+            char *CEPString = (char *) malloc(CEPStringLength + 1);
+            snprintf(CEPString, CEPStringLength + 1, "%f", CEP);
+            UART_write(uart, CEPString, CEPStringLength);
+            free(CEPString);
+
+            // Print carriage return and newline
+            input = '\r';
+            UART_write(uart, &input, 1);
+            input = '\n';
+            UART_write(uart, &input, 1);
+        }
     }
 }

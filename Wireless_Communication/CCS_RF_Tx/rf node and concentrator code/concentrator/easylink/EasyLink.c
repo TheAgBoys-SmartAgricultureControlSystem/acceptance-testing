@@ -172,7 +172,7 @@ static RF_CmdHandle asyncCmdHndl = EASYLINK_RF_CMD_HANDLE_INVALID;
 
 /* Set Default parameters structure */
 static const EasyLink_Params EasyLink_defaultParams = {
-    .ui32ModType            = EasyLink_Phy_50kbps2gfsk,
+    .ui32ModType            = EasyLink_Phy_Custom,
     .pClientEventCb         = NULL,
     .nClientEventMask       = 0,
     .pGrnFxn                = (EasyLink_GetRandomNumber)rand
